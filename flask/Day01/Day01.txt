@@ -1,0 +1,187 @@
+赵旭
+zhaoxu@tedu.cn
+
+
+Flask 轻量级的WEB框架
+AJAX 在WEB中完成异步的请求和响应
+Django 重量级的WEB框架
+
+Python WEB
+
+1.静态网页 和 动态网页
+	1.静态网页 : 无法与服务器进行数据交互的网页
+	2.动态网页 : 允许与服务器进行数据交互的网页
+2.WEB 与 服务器
+	1.WEB : 网页(HTML,CSS,JS)
+	2.服务器(Web Server)
+		能够给用户提供服务的机器就是服务器
+		1.硬件 和 软件
+			硬件 : 一台计算机
+			软件 : 一个能够接收用户请求并个给出响应的程序
+				1.作用
+					1.存储WEB的信息
+					2.能够处理用户的请求(request)和响应(response)
+					3.执行服务器端的处理程序
+					4.具备最基本的安全功能
+				2.服务器端的软件
+					1.APACHE
+					2.TOMCAT
+					3.IIS(Internet Information Service)
+					4.Nginx
+3.框架
+	1.什么是框架
+		框架是一个为了解决开放性问题而存在的一种程序结构
+		框架的本身提供了最基本的功能
+		我们只需要在框架的基础功能上搭建自己的操作就可以了
+	2.Python web 框架
+		1.Flask - 轻量级
+		2.Webpy - 轻量级
+		3.Tornado - 异步框架
+		4.Django - 重量级
+	3.框架模式
+		1.MTV(Flask,Django)
+			M : Models层,模型层,负责与数据库打交道
+			T : Templates层,模板层,处理用户显示的内容,如html
+			V : Views层,视图层,处理与用户打交道的内容(请求和响应)
+		2.MVC
+			M : Models层,模型层,负责与数据库打交道
+			V : Views层,视图层,处理用户显示的内容,如html
+			C : Controller层,控制器层,处理与用户打交道的内容(请求和响应)
+
+			M  ---  M
+			T  ---  V
+			V  ---  C
+4.Flask
+	1.什么是Flask
+		Flask是一个基于Python并且依赖于Jinja2模板引擎和Werkzeug WSGI服务的一个微型框架(Micro Framework)
+		WSGI : Web Server Gateway Interface(WEB服务网关接口)
+		Flask是基于 MTV 框架模式开发出来的框架
+	2.安装Flask
+		1.查看已安装的Flask版本
+			在 python 的交互模式中
+			1.import flask
+				没报错 : 已经安装好了Flask,可以继续查看版本
+				报错 : 没安装Flask
+			2.flask.__version__
+				已安装Flask的情况下,查看安装的版本
+		2.安装Flask
+			sudo pip3 install flask
+			pip3 download flask
+		3.初始化Flask应用
+			见代码... ...
+
+		4.杀掉占用5000端口的进程
+			1.netstat -lptu
+				查看占用5000端口的进程ID
+			2.sudo kill -9 进程ID
+				将进程ID对应的程序杀掉
+		5.练习:
+			1.访问路径是 http://localhost:5000/login
+				在网页中显示:欢迎来到登录页面
+			2.访问路径是 http://localhost:5000/register
+				在网页中显示:欢迎来到注册页面
+5.Flask - 路由(route)
+	1.什么是路由
+		处理url和函数之间的关系的程序就是"路由"
+		@app.route('/login')
+		def login():
+			pass
+	2.路由的体现
+		在Flask中,路由是通过@app.route装饰器来表示的
+		1.基本的路由体现
+			# http://localhost:5000/admin/login
+			@app.route('/admin/login')
+			def admin_login():
+				return "xxx"
+		2.带参数的路由
+			路由中可以携带参数来表示不同的数据
+			http://localhost:5000/show/wangwc
+			http://localhost:5000/show/gebilaowang
+			http://localhost:5000/show/chaogege
+			http://localhost:5000/show/xxx
+
+			1.基本带参路由
+				@app.route('/show/<name>')
+				def show(name):
+					# name 参数表示的就是由地址栏上传递进来的数据
+					pass
+			2.带多个参数的路由
+				多个参数使用 / 隔开,并继续使用 <> 来表示
+				@app.route('/show/<name>/<age>')
+				def show(name,age):
+					pass
+
+			3.指定参数类型的路由
+				使用 类型转换器 解决参数类型的问题
+				@app.route('/show/<name>/<int:age>')
+				def show():
+					name : 字符串类型的数据
+					age : 整数类型的数据
+				
+				int:类型转换器
+				Flask中所支持的类型转换器
+				类型转换器        作用
+				缺省              字符串,不能有斜杠('/')
+				int:              整数
+				float:            浮点型
+				path:             字符串,允许有斜杠('/')
+
+				练习:
+					1.访问路径如下
+						http://localhost:5000/calc/数字1/数字2
+					2.根据以上的访问路径制定路由以及视图处理函数
+					3.在视图中,对两个数字进行相加,并响应在浏览器上
+		3.多 URL 的路由匹配
+			@app.route('/地址1')
+			@app.route('/地址2')
+			.... ....
+			def index():
+				return ""
+			
+			练习:
+				当访问路径是以下任意一个的时候
+				http://localhost:5000
+				http://localhost:5000/index
+				http://localhost:5000/数字
+				http://localhost:5000/index/数字
+				将请求交给 index_views()去处理
+				判断路由中到底有没有数字传递进来:
+					如果有:
+						响应:您当前看的页数为 xxx
+					如果没有:
+						响应:您当前看的页数为 1
+	3.路由中设置允许接收的HTTP请求方法
+		所有的路由默认只接受get请求,不接受post请求
+		@app.route('/xxx',methods=['POST','GET'])
+		@app.route('/xxx',methods=['POST'])
+	4.URL的反向解析
+		正向解析:程序自动解析,会根据访问路径(@app.route('xxx')),自动来匹配处理函数
+
+		反向解析:通过视图处理函数的名称自动生成对应的访问路径
+
+		在Flask中要实现反向解析的话,需要使用:
+		from flask import url_for
+		url_for(funName,args)
+			funName : 要生成地址所对应的函数名
+			args : 该地址中要用到的参数
+
+		作业:
+			1.创建一个Flask项目 - Blog
+			2.在Blog中,创建 run.py 启动文件
+			3.在run.py中搭建好Flask程序结构
+			4.定义如下访问路径,并给出响应:
+				1.http://localhost:5000
+					响应:这是blog的首页
+				2.http://localhost:5000/list
+					响应:这是blog的列表页
+				3.http://localhost:5000/release
+					响应:这是blog的发表页
+				4.http://localhost:5000/info/<id>
+					响应:查看id为xxx的blog信息
+
+
+
+
+
+http://localhost:5000/ : 访问index()
+http://localhost:5000/index : 访问index()

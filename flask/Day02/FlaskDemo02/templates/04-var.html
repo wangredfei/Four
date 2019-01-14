@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>for标签</h1>
+<h2>循环-params.list</h2>
+{% for name in params.list %}
+
+<!--{% if loop.first %}-->
+<!--<h3 style="background:red">姓名:{{name}}</h3>-->
+<!--{% elif loop.last %}-->
+<!--<h3 style="background:yellow;">姓名:{{name}}</h3>-->
+<!--{% else %}-->
+<!--<h3 style="background:pink;">姓名:{{name}}</h3>-->
+<!--{% endif %}-->
+
+<!--<h3-->
+<!--{% if loop.first %}-->
+<!--style="background: red;"-->
+<!--{% elif loop.last %}-->
+<!--style="background: yellow;"-->
+<!--{% else %}-->
+<!--style="background: pink;"-->
+<!--{% endif %}-->
+<!--&gt;姓名:{{name}}</h3>-->
+
+<h3 style="background:
+        {% if loop.first %}
+            red
+        {% elif loop.last %}
+            yellow
+        {% else %}
+            pink
+        {% endif %}
+        ;">姓名:{{name}}</h3>
+
+{% endfor %}
+<!--
+    1.循环params.tup中所有的元素
+    2.循环params.dic中所有的键
+    3.循环params.dic中所有的值
+    4.循环params.dic中所有的键和值
+-->
+<h2>循环-params.tup</h2>
+{% for name in params.tup %}
+<h3>姓名:{{name}}</h3>
+{% endfor %}
+<h2>循环-params.dic.keys()</h2>
+{% for key in params.dic.keys() %}
+<h3>键:{{key}}</h3>
+{% endfor %}
+
+<h2>循环-params.dic.values()</h2>
+{% for v in params.dic.values() %}
+<h3>值:{{v}}</h3>
+{% endfor %}
+
+<h2>循环-params.dic.items()</h2>
+{% for key,value in params.dic.items() %}
+<h3>第{{loop.index}}次循环</h3>
+<h3>是第一次循环吗:{{loop.first}}</h3>
+<h3>是最后一次循环吗:{{loop.last}}</h3>
+<h3>{{key}}:{{value}}</h3>
+{% endfor %}
+
+
+<h1>if标签</h1>
+{% if params.delay < 200 %}
+<h2>
+    游戏可以继续进行
+    当前延迟值为:{{params.delay}}
+</h2>
+{% else %}
+<h2>
+    游戏已无法正常进行
+</h2>
+{% endif %}
+
+{% if params.uname %}
+<h2>欢迎：{{params.uname}}</h2>
+{% else %}
+<h2>
+    <a href="#">请登录</a>
+</h2>
+{% endif %}
+<h1>过滤器的显示</h1>
+<h2>ustr:{{params.ustr}}</h2>
+<h2>capitalize:{{params.ustr|capitalize}}</h2>
+<h2>default:{{uname|default('该变量不存在')}}</h2>
+<h2>truncate:{{params.ustr|truncate(9)}}</h2>
+<h1>变量的显示</h1>
+<h2>游戏名称:{{params.name}}</h2>
+<h2>延迟时长:{{params.delay}}</h2>
+<h2>刺客(列表):{{params.list}}</h2>
+<h2>刺客[0]:{{params.list[0]}}</h2>
+<h2>刺客[0]:{{params.list.0}}</h2>
+<h2>辅助(元组):{{params.tup}}</h2>
+<h2>辅助[1]:{{params.tup[1]}}</h2>
+<h2>辅助[1]:{{params.tup.1}}</h2>
+<h2>法师(字典):{{params.dic}}</h2>
+<h2>游戏(对象):{{params.game}}</h2>
+<h2>游戏.group:{{params.game.group}}</h2>
+<h2>游戏.prt():{{params.game.prt()}}</h2>
+</body>
+</html>

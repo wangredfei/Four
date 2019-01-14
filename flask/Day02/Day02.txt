@@ -1,0 +1,168 @@
+1.模板 - Templates
+	1.什么是模板
+		模板,在Flask中就是允许给用户看的网页,动静结合的
+		动:允许包含服务器端的动态内容,如:变量,标签,过滤器,
+		静:纯HTML,CSS以及JavaScript的内容
+
+		在Flask中,模板是依赖于Jinja2的模板引擎
+		Jinja官网:http://jinja.pocoo.org/
+	2.模板的设置
+		默认情况下,Flask会在程序的主文件夹中会搜索一个templates的目录来作为模板的存放位置
+
+		需要手动的在程序中创建一个 templates 目录,并将所有的模板文件(html)都存放进去
+	3.模板的渲染
+		作用:在视图中,将模板文件(**.html)先变成字符串,再响应给浏览器
+		语法:
+			from flask import render_template
+			return render_template('xxx.html')
+	4.模板中的语法(重点)
+		1.变量
+			变量是一种特殊的占位符,告诉模板引擎,该位置的值是从渲染模板时的哪个数据中获取出来的
+			语法:
+				1.在视图中
+					@app.route('/xxx')
+					def xxx():
+						return render_template('xxx.html',变量1=值1,变量2=值2,... ...)
+
+						return render_template('01-template.html',name='wangwc',age=35)
+				2.在模板中
+					{{变量名}}
+					01-template.html 中:
+						{{name}}
+				练习:
+					创建 /03-template 路由,能够渲染 03-template.html模板,并在模板中输出以下内容:
+					歌名 : <<绿光>>
+					作词 : 宝强
+					作曲 : 乃亮
+					演唱 : 羽凡
+
+			允许传递到模板中作为变量的数据类型:
+				字符串,整数,小数,
+				列表,元组,字典
+				对象
+		2.过滤器
+			1.什么是过滤器
+				在变量输出前,允许修改变量的值,再进行输出
+			2.语法
+				{{变量|过滤器(参数)}}
+
+				常用过滤器:
+					过滤器名               说明
+					capitalize             首字符变大写,其他变小写
+					lower                  将值转换为小写
+					upper                  将值转换为大写
+					title                  将值中的每个单词首字符变大写
+					trim                   去掉值两端的空格
+					default('xx')          如果变量不存在,将采用default中的值作为默认输出
+					truncate(num[,bool])     截取指定长度字符串,后面使用...显示
+		3.标签
+			1.什么是标签
+				在模板中,标签是属于服务器端内容
+				每个标签表示的是不同的服务器端的功能
+			2.常用标签
+				1. if 标签
+					1. 基本if标签
+						{% if 条件 %}
+							if条件为真的时候,要执行的内容
+							允许是 静态内容,也允许是动态内容
+						{% endif %}
+					2. if ... else 结构
+						{% if 条件 %}
+						...
+						{% else %}
+						...
+						{% endif %}
+					3. if ... elif ... elif 结构
+						{% if 条件1 %}
+						...
+						{% elif 条件2 %}
+						...
+						{% elif 条件3 %}
+						...
+						{% else %} -- 可选
+						...
+						{% endif %}
+				2. for 标签
+					{% for 变量 in 元组|列表|字典 %}
+						允许出现静态内容:html,css,js
+						允许出现动态内容:
+							变量 - {{}}
+							标签 - {% if %} {% endif %}
+					{% endfor %}
+
+					循环的内部变量 - loop
+					loop的作用:能够记载当前循环的一些相关信息
+						loop 常用属性:
+							1. index
+								作用:记录当前循环的次数,从1开始记录
+							2. index0
+								作用:同上,从0开始记录
+							3.first
+								作用:判断本次循环是否为第一次循环
+								值:True(是第一次循环) 或 False(非第一次循环)
+							4.last
+								作用:判断本次循环会否为最后一次循环
+								值:True(是最后一次循环) 或 False(非最后一次循环)
+				3. macro 标签 (宏)
+					1.作用
+						相当于是在模板中声明函数
+					2.语法
+						{% macro 名(参数列表) %}
+							xxx xxx
+						{% endmacro %}
+					3.在独立的模板文件中声明宏
+						1.创建 macro.html 模板文件
+							作用:定义项目中要用到的所有的宏
+						2.在使用的网页中,导入 macro.html 模板
+							{% import 'macro.html' as macros %}
+				4. include 标签		
+					将其他的模板文件包含到当前的模板文件中
+					语法:{% include 'xxx.html' %}
+	5.静态文件的处理
+		1.什么是静态文件
+			在Flask中,不能与服务器做动态交互的文件称为静态文件
+			如:图片,css,js,音视频,文档... ...
+		2.静态文件的处理
+			1.所有的静态文件必须放在 static 目录中
+				static目录必须放在项目的根目录处
+			2.所有的静态文件必须通过 /static/ 路径进行访问
+				/static : 要到静态资源目录中进一步的搜索文件
+					http://localhost:5000/static/images/a.jpg
+
+
+		作业:
+			搭建Blog项目中的模板以及静态文件
+			在 Blog 项目的基础上,实现以下功能:
+			1.将所有的html页面导入到Blog项目中 -> templates
+			2.将所有的静态文件(css,js,图片)导入到Blog项目中 -> static
+			3.在模板中处理好所有的静态文件们
+				1.首页 - /
+					访问时,能够显示 index.html 中的内容
+				2.列表页 - /list
+					访问时,能够显示 list.html 中的内容
+				3.发布页 - /release
+					访问时,能够显示 release.html 中的内容
+				4.详情页 - /info/id
+					访问时,能够显示 info.html 中的内容
+					
+		明天:
+			1.模板 
+				模板继承
+			2.修改配置
+			3.请求(request) 和 响应(response)
+
+
+
+
+
+
+
+
+{
+	'game': <__main__.Game object at 0x7f6b23add898>, 
+	'dic': {'WZJ': '王昭君', 'DJ': '妲己', 'AQL': '安其拉'},
+	'tup': ('蔡文姬', '名师因', '刘禅'), 
+	'name': '王者荣耀', 
+	'list': ['阿珂', '兰陵王', '孙悟空', '李白'], 
+	'delay': 460
+}

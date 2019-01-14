@@ -1,0 +1,26 @@
+{% macro show_ul(list) %}
+<ul>
+    {% for name in list %}
+    <li>
+        <p style="color:red;">
+            姓名:{{name}}
+        </p>
+    </li>
+    {% endfor %}
+</ul>
+{% endmacro %}
+
+{% macro show_p(str) %}
+<p style="font-size:20px;font-weight: bold;">
+    内容为:{{str}}
+</p>
+{% endmacro%}
+
+
+
+
+
+
+
+
+

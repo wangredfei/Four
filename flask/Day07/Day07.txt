@@ -1,0 +1,86 @@
+1.关系映射
+	1.一对多映射
+		在Flask中:
+		1.在"多"类增加一个属性，表示对"一"类进行引用
+			属性 = db.Column(db.Integer,db.ForeignKey("主表.主键"))
+		2.在"一"类增加关联属性和反向引用关系属性
+			如：Course类(course表) 和 Teacher类(teacher表)
+			关联属性：在Course类中增加的一个属性，表示对应的所有的Teacher对象
+			反向引用关系属性：在Teacher类中增加一个属性，表示对应的Course对象是谁
+
+			属性名=db.relationship(
+				"多类名",
+				backref="反向引用关系属性名",
+				lazy="dynamic"
+			)
+			lazy : 指定延迟加载模式，指定如何加载关联数据
+				1.select
+					首次访问时，加载关联数据
+				2.immediate
+					源对象使用后，马上加载关联数据
+				3.subquery
+					效果同上，但是会使用子查询的方式加载关联数据
+				4.noload
+					永不加载记录
+				5.dynamic
+					默认不加载记录，但会提供加载记录的查询
+			
+
+			class Course(db.Model):
+				__tablename__ = "course"
+				id = db.Column(db.Integer,primary_key=True)
+				xxxx  xxxx
+				#关联属性和反向引用关系属性
+				teachers = db.relationship(
+					"Teacher",
+					backref='course',
+					lazy="dynamic")
+			
+			class Teacher(db.Model):
+				__tablename__ = "teacher"
+				xxxx  xxxx
+				
+				#外键引用
+				course_id = db.Column(db.Integer,db.ForeignKey('course.id'))
+	2.一对一映射
+		1.什么是一对一
+			A表中的一条记录只能与B表中的一条记录相关联
+			B表中的一条记录只能与A表中的一条记录相关联
+		2.在数据库中的体现
+			关联的两张表的任意一张表中：
+			增加外键，引用自另外一张表的主键，并施加唯一约束
+		3.在实体类中的体现
+			1.在任意一个类中增加：
+				外键列名=db.Column(db.Integer,db.ForeignKey('主表.主键'),unique=True)
+
+				class User(db.Model):
+					__tablename__ = "user"
+					xxxx xxxx
+				
+				class Wife(db.Model):
+					__tablename__ = "wife"
+					xxxx xxxx
+					user_id=db.Column(db.Integer,db.ForeignKey('user.id'),unique=True)
+
+			2.在另外一个实体类中增加：
+				关联属性 和 反向引用关系属性
+				属性 = db.relationship(
+					"关联的实体类",
+					backref="反向引用关系属性名称",
+					uselist=False
+				)
+
+				uselist : 该属性将使用标量来表示，而不是列表
+
+				class User(db.Model):
+					__tablename__ = "user"
+					xxxx xxxx
+					wife = db.relationship("Wife",backref="user",uselist=False)
+				
+				class Wife(db.Model):
+					__tablename__ = "wife"
+					xxxx xxxx
+					user_id=db.Column(db.Integer,db.ForeignKey('user.id'),unique=True)
+				
+				练习：完成一对一的查询操作
+	3.多对多映射

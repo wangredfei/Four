@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+        这是02-parent
+        {% endblock %}
+    </title>
+</head>
+<body>
+<h1>这是parent中的头部内容</h1>
+<h1>
+    {% block content %}
+    这是parent中的核心内容
+    {% endblock %}
+</h1>
+<h1>这是parent中的底部内容</h1>
+</body>
+</html>

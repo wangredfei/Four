@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>过滤器的显示</h1>
+<h2>ustr:{{params.ustr}}</h2>
+<h2>capitalize:{{params.ustr|capitalize}}</h2>
+<h2>lower:{{params.ustr|lower}}</h2>
+<h2>upper:{{params.ustr|upper}}</h2>
+<h2>title:{{params.ustr|title}}</h2>
+<h2>trim:{{params.ustr|trim}}</h2>
+<h2>default:{{uname|default('该变量不存在！')}}</h2>
+<h2>truncate(num[,bool)]:{{params.ustr|truncate(10,True)}}</h2>
+<h1>变量的显示</h1>
+<h2>游戏名称:{{params.name}}</h2>
+<h2>延迟时长:{{params.delay}}</h2>
+<h2>刺客(列表):{{params.list}}</h2>
+<h2>刺客[0]:{{params.list[0]}}</h2>
+<h2>刺客[0]:{{params.list.0}}</h2>
+<h2>辅助(元组):{{params.tup}}</h2>
+<h2>辅助(元组):{{params.tup.2}}</h2>
+<h2>法师(字典):{{params.dic}}</h2>
+<h2>法师(字典):{{params.dic.DJ}}</h2>
+<h2>游戏(对象):{{params.game}}</h2>
+<h2>游戏.group:{{params.game.group}}</h2>
+<h2>游戏.prt():{{params.game.prt()}}</h2>
+</body>
+</html>

@@ -1,0 +1,170 @@
+1.模板中的语法
+	1.变量
+		1.服务器端
+			return render_template('xxx.html',var1=value1,var2=value2)
+		2.模板
+			{{var1}}
+	2.过滤器
+		{{var|filter(parameters)}}
+
+		{{var|default('xxxx')}}
+		{{var|truncate(9,true)}}
+	3.标签
+		1.if
+			{% if express %} ... {% endif %}
+		2.for
+			{% for var in iterator %}
+				{{loop.index}}
+				{{loop.index0}}
+				{{loop.first}}
+				{{loop.last}}
+			{% endfor %}
+		3.macro - 宏
+			相当于在模板中定义方法
+			
+			声明:
+			{% macro 名(参数) %}
+				
+			{% endmacro %}
+			调用:
+			{{名(参数)}}
+
+			将所有的宏声明在一个模板中 : macro.html
+			{% import 'macro.html' as macros %}
+		4.include
+			{% include 'xxx.html' %}
+
+========================================================
+1.模板
+	1.静态文件地址的反向解析
+		根据静态文件的具体路径,生成静态访问路径
+		语法:
+			url_for('static',filename='file_path')
+			ex:
+				url_for('static',filename='images/a.jpg')
+				结果: /static/images/a.jpg
+	2.模板的继承
+		1.语法
+			1.父模板中
+				需要定义出那些东西在子模板中可以被重写
+				{% block 块名 %}
+					在父模板中可以正常显示的内容
+				{% endblock %}
+				block :
+					1.在父模板中可以正常显示,没任何影响
+					2.在子模板中可以被重写
+			2.子模板中
+				1.指定需要继承自哪个父模板
+					{% extends '父模板名称' %}
+				2.按需重写
+					{% block 块名 %}
+						此处编写的内容会覆盖掉父模板中同名block的内容
+						允许通过{{super()}}来调用父模板中的内容
+					{% endblock %}
+2.修改配置
+	1.构建Flask允许指定的配置信息
+		app=Flask(
+			__name__,
+			template_folder='xxx',
+			static_folder='xxx',
+			static_url_path='/xxx'
+		)
+		1.template_folder : 指定存放模板的文件夹的名称
+		2.static_folder : 指定存放静态文件资源的文件夹的名称
+			注意:如果没有指定static_url_path的话,则访问路径和static_folder 的名称是一致的
+		3.static_url_path : 指定静态文件的访问路径
+	2.启动程序的运行配置
+		app.run(debug=True,port=端口号,host='0.0.0.0')
+		host : 任何表示本机的地址都可以访问该项目
+3.请求(request) 和 响应(response)	
+	1.HTTP协议
+		HTTP:Hyper Text Transfer Protocol
+		作用:规范了数据是如何打包以及传递的
+
+		1.通用消息
+		2.请求消息
+			1.请求起始行
+				1.请求方式 - GET / POST
+				2.请求协议 - http / https
+				3.协议版本 - 1.1
+			2.请求消息头
+				表达客户端浏览器要传递给服务器的信息
+				由 key:value 的形式组成
+				每个消息头会传递不同的信息给服务器
+			3.请求体
+				伴随着请求要传递给服务器端的信息就是请求体
+				只有 post 和 put 请求时有请求体的,其他请求方式没有请求体
+		3.响应消息
+			作用:将服务器端的信息传递给浏览器
+			1.响应起始行
+				1.协议以及版本号 : HTTP/1.1
+				2.响应状态码 : 200 / 404 / 500
+					1xx:请求已收到,继续处理
+					2xx:请求成功接收
+					3xx:该请求需要进一步处理
+						301 - 永久性重定向
+						302 - 临时性重定向
+						304 - 无修改,从缓存中提取数据
+					4xx:资源不存在或无权限
+						404 : 请求资源不存在
+						403 : Forbbiden
+						405 : Method Not Allowed
+					5xx:服务器处理请求失败
+						500 : Interneral Server Error 
+				3.原因短句
+					以简短的英文单词解释响应状态码
+					200 : OK
+					404 : Not Found
+			2.响应消息头
+				以 key:value 的形式存在,要传递给浏览器的一些说明信息
+				ex:
+					Content-Type : application / javascript
+
+					Content-Type 作用:告诉浏览器响应回来的数据的类型
+			3.响应主体
+	2.请求对象 - request
+		request - 请求对象,封装了所有与请求相关的信息.如:请求数据,请求消息头,.... .....
+
+		在Flask中,要使用request的话,必须先导入:
+		from flask import request
+		允许在视图处理函数中使用request
+
+		1.request的常用成员
+			1.scheme : 获取请求协议
+			2.method : 获取本次请求的请求方式(GET / POST)
+			3.args : 获取以get请求方式提交的数据
+			4.form : 获取以post请求方式提交的数据
+		2.获取请求提交的数据
+			1.get 请求方式
+				1.地址栏上提交的数据
+					http://localhost:5000/04-request?name=abc&age=30
+				2.form表单中使用get方式提交
+					<form action="/04-request">
+						<input type="text" name="name">
+						<input type="number" name="age">
+						<input type="submit">
+					</form>
+					http://localhost:5000/04-request?name=abc&age=30
+				3.使用location.href
+					location.href="http://localhost:5000/04-request?name=abc&age=30"
+			2.post 请求方式
+				只有表单中设置method为post才能产生post请求
+
+				request.form 封装的就是以 post 方式请求提交过来的数据,允许按照字典的方式操作数据
+					request.form['控件的name值']
+					request.form.get('控件的name值')
+			
+		作业:
+			1.处理 Blog 中的 登录 - login
+				1.如果是 get 请求,则渲染 login.html 到浏览器
+				2.如果是 post 请求,则接收所有的请求数据 并响应给 浏览器
+			2.处理 Blog 中的 注册 - register
+				1.如果是get请求,渲染register.html到浏览器
+				2.如果是 post 请求,接收所有的数据响应给浏览器
+
+
+
+
+['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__enter__', '__eq__', '__exit__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_cached_json', '_get_data_for_json', '_get_file_stream', '_get_stream_for_parsing', '_load_form_data', '_parse_content_type', 'accept_charsets', 'accept_encodings', 'accept_languages', 'accept_mimetypes', 'access_route', 'application', 'args', 'authorization', 'base_url', 'blueprint', 'cache_control', 'charset', 'close', 'content_encoding', 'content_length', 'content_md5', 'content_type', 'cookies', 'data', 'date', 'dict_storage_class', 'disable_data_descriptor', 'encoding_errors', 'endpoint', 'environ', 'files', 'form', 'form_data_parser_class', 'from_values', 'full_path', 'get_data', 'get_json', 'headers', 'host', 'host_url', 'if_match', 'if_modified_since', 'if_none_match', 'if_range', 'if_unmodified_since', 'input_stream', 'is_json', 'is_multiprocess', 'is_multithread', 'is_run_once', 'is_secure', 'is_xhr', 'json', 'list_storage_class', 'make_form_data_parser', 'max_content_length', 'max_form_memory_size', 'max_forwards', 'method', 'mimetype', 'mimetype_params', 'on_json_loading_failed', 'parameter_storage_class', 'path', 'pragma', 'query_string', 'range', 'referrer', 'remote_addr', 'remote_user', 'routing_exception', 'scheme', 'script_root', 'shallow', 'stream', 'trusted_hosts', 'url', 'url_charset', 'url_root', 'url_rule', 'user_agent', 'values', 'view_args', 'want_form_data_parsed']
+
+

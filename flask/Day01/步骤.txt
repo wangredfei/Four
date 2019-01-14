@@ -1,0 +1,4 @@
+1. sudo subl /etc/hosts
+	将 0.0.0.0 account.jetbrains.com 添加到最后一行并保存
+2. 码
+	见文件

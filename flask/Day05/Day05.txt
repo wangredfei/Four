@@ -1,0 +1,152 @@
+1.模型类的映射管理
+	1.什么是映射管理
+		对模型类/实体类的修改允许再映射回数据库
+	2.依托于第三方库完成管理
+		1.flask-script
+			pip3 install flask-script
+			包:flask_script
+			类:Manager
+				作用:可以对项目进行管理,如:启动项目,添加命令
+		2.flask-migrate
+			pip3 install flask-migrate
+			包:flask_migrate
+			类:
+				1.Migrate
+					作用:用于管理 app 和 db 之间的协调关系
+				2.MigrateCommand
+					作用:允许在终端中提供实体类迁移的命令
+	3.实现数据库的迁移
+		1.python3 run01.py db init
+			作用:做一些初始化的行为操作
+			特点:一个项目中只执行一次就可以了
+		2.python3 run01.py db migrate
+			作用:将编写好的实体类生成中间文件
+			特点:只要检测到实体类有修改,就会生成中间文件
+		3.python3 run01.py db upgrade
+			作用:将中间文件映射回数据库
+2.ORM中的CRUD
+	1.增加 - C(Create)
+		1.创建实体的对象,并为属性赋值
+			user = User()
+			user.uname = 'wangwc'
+			user.age = 18
+		2.将实体对象增加回数据库
+			db.session.add(实体对象)
+			#针对非查询操作,必须要手动提交回数据库
+			db.session.commit()
+		3.配置操作自动提交
+			针对所有非查询操作
+			配置成功后,会在执行完视图之后,整体将行为提交回数据库
+			app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']=True
+	2.查询 - R(Retrieve)
+		1.基于 db.session 进行查询
+			1.db.session.query()
+				该函数会返回一个Query对象,类型为BaseQuery
+				该返回值中会包含针对某个实体或实体中的列所有的查询操作
+				语法:
+					1.db.session.query(实体类)
+						查询对应实体类中所有列的数据
+						ex:
+							db.session.query(User)
+							等同于:select * from user
+					2.db.session.query(实体类.属性1,实体类.属性2)
+						查询对应实体类中部分列的数据
+						ex:
+							db.session.query(User.id,User.uname)
+							等同于:
+								select user.id,user.uname from user
+			2.查询执行函数
+				目的:在query()的基础上的得到最终的数据
+				语法:db.session.query(xxx).查询执行函数()
+				函数           说明
+				all()          以列表的方式返回query()中所有的数据
+				first()        以实体对象的方式返回query()中的第一条数据,如果没有结果,则返回None
+				first_or_404() 效果同上,如果查询不到数据,则响应404
+				count()        返回查询结果的数量
+			3.查询过滤器函数
+				作用:在db.session.query()的基础上,进行条件筛选
+				语法:db.session.query().查询过滤器函数().查询执行函数()
+				过滤器函数          说明
+				filter()            按指定条件进行过滤
+				filter_by()         按等值条件过滤时使用
+				limit()             获取前几行数据
+				order_by()          排序
+				group_by()          分组
+
+				过滤器函数的详解:
+				1.filter()
+					作用:实现查询中的各种条件
+					注意:条件必须由 实体类.属性 构成
+					1.查询年龄大于17的user的信息
+						db.session.query(User).filter(User.uage>17).all()
+					2.查询年龄大于17并且id大于1的user的信息
+						db.session.query(User).filter(User.uage>17,User.id>1).all()
+					3.查询年龄大于17或者id大于1的user的信息
+						注意:查询 或 的操作,要借助于 or_()
+						用法:or_(条件1,条件2)
+						db.session.query().filter(or_(xxx)).all()
+					4.查询id的值为2的user的信息
+						注意:等值判断要用 == 
+						db.session.query().filter(User.id==2).first()
+					5.查询uemail中包含 w 的user的信息
+						select * from user where uemail like '%w%'
+						注意:模糊查询like需要使用实体类的属性所提供的like()完成查询
+						db.session.query(User).filter(User.uemail.like('%w%')).all()
+					6.模糊查询 - in
+						注意:模糊查询in需要使用实体类的属性所提供的in_()完成查询
+						db.session.query(User).filter(User.uage.in_([15,17,19])).all()
+					7.模糊查询 - between and
+						注意:模糊查询between and 需要使用实体类的属性所提供between(值1,值2)完成查询
+						db.session.query(User).filter(User.uage.between(13,15)).all()
+				2.filter_by()
+					作用:只做等值条件筛选过滤,并且只用于单表查询
+					特点:
+						1.不用 实体类.属性名,直接使用 属性名即可
+						2.不用 == ,而用 = 
+					db.session.query(User).filter_by(id=1).first()
+				3.limit()
+					作用:获取前几行数据
+					语法:db.session.query(User).limit(num).all()
+					1.db.session.query(User).limit(1).all()
+						获取前1条数据
+					2.使用 offset() 可以完成数据的偏移
+						db.session.query(User).limit(2).offset(3).all()
+						跳过前3条数据,再获取剩余的前2条数据
+				4.order_by()
+					1.User表中的数据按id降序排序
+						db.session.query(User).order_by("id desc")
+					2.User表中的数据按年龄升序排序,id降序排序
+						db.session.query(User).order_by("age,id desc")
+
+				练习:
+					1.访问路径 /03-queryall
+					2.能够渲染 03-queryall.html 模板
+					3.在模板中显示
+						用表格显示以下内容:
+						id    姓名    年龄    邮箱    操作
+						1     wangwc  16     xxxx@163  删除 修改
+						2     Rapwang 18     xxxx@163  删除 修改
+
+
+		2.基于 实体类 进行查询
+
+	
+
+
+
+select * from user limit 2,3
+
+会话
+
+
+ID:xxx 姓名:xxxx 年龄:xxxx 邮箱:xxxx
+ID:xxx 姓名:xxxx 年龄:xxxx 邮箱:xxxx
+
+
+
+
+
+
+
+
+

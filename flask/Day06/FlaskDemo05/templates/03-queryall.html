@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table width="500" border="1">
+    <tr>
+        <th>ID</th>
+        <th>姓名</th>
+        <th>年龄</th>
+        <th>邮箱</th>
+        <th>操作</th>
+    </tr>
+    {% for u in users %}
+    <tr>
+        <td>{{u.id}}</td>
+        <td>{{u.uname}}</td>
+        <td>{{u.uage}}</td>
+        <td>{{u.uemail}}</td>
+        <td>
+            <a href="/04-update?id={{u.id}}">修改</a>
+            <a href="javascript:deleteUser({{u.id}},'{{u.uname}}');">删除</a>
+        </td>
+    </tr>
+    {% endfor %}
+
+    <script>
+        /**
+         * 1.给出是否要删除的提示
+         * 2.如果确定删除的话则向服务器发送请求并将id传递到服务器上
+         * 参数 id :表示要删除的用户的id
+         * 参数 uname:表示要删除的用户的用户名
+         * */
+        function deleteUser(id, uname) {
+            var ret = confirm('是否要删除姓名为' + uname + "的用户的信息");
+            if (ret) {
+                //向/07-delete发送一个请求，并将id传递过去
+                window.location.href = '/07-delete?id=' + id;
+            }
+        }
+    </script>
+</table>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/js/jquery-1.11.3.js"></script>
+    <script src="/static/js/test.js"></script>
+</head>
+<body>
+<img src="/static/images/2.jpg" width="300">
+{% include 'header.html' %}
+
+{% macro show_li(str) %}
+<li>
+    <p style="font-size: 20px;">内容如下：</p>
+    <span style="color: orange;">{{str}}</span>
+</li>
+{% endmacro %}
+
+<ul>
+    {% for name in list %}
+    {{show_li(name)}}
+    {% endfor %}
+</ul>
+
+<h1>调用macros.html中宏</h1>
+{% import 'macros.html' as macros%}
+{{macros.show_ul(list)}}
+
+{% for name in list %}
+{{macros.show_p(name)}}
+{% endfor %}
+</body>
+</html>
