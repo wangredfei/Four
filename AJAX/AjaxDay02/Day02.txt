@@ -1,0 +1,86 @@
+1.异步对象
+	XMLHttpRequest
+	主流浏览器:new XMLHttpRequest
+	低版本浏览器:new ActiveXObject("Microsoft.XMLHTTP")
+2.xhr的成员
+	1.open()
+		作用：创建请求
+		语法:open(method,url,async)
+	2.readyState
+		作用：判断xhr的自身的状态
+		取值：0-4 共5个状态
+			4 ：处理了所有的请求和响应
+	3.status
+		作用：判断服务器端的响应状态码
+		取值：
+			200 ：服务器端正确响应所有内容
+	4.responseText
+		作用：接收响应文本
+	5.onreadystatechange
+		作用：回调函数，每当xhr的readyState值发生改变时要调用的函数
+	6.send()
+		作用：发送请求
+
+	========================================
+1.使用ajax发送post请求
+		1.创建请求时将使用 post 方法
+			xhr.open('post','/xxxxx',true)
+		2.请求提交的数据要放在 send(xxx)中
+			xhr.send("uname=wangwc&uage=30")
+		3.必须设置 Content-Type 的消息头
+			值为: application/x-www-form-urlencoded
+			语法：
+				xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+
+2.JSON
+	1.什么是JSON
+		JSON:JavaScript Object Notation
+			目的：以JS对象的方式来表示复杂结构的数据
+	2.JSON的表现
+		1.使用JSON表示单个对象
+			1.在JS中使用{}表示一个对象
+			2.在{}中，通过 key:value 来表示一个属性(数据)
+			3.key必须使用""引起来
+			4.value如果是字符串的话，也必须使用""引起来
+			5.多对key:value之间采用 , 分割
+			ex:
+				var obj = {
+					"id":1,
+					"uname":"wangwc",
+					"upwd":"123456",
+					"nickname":"王老师"
+				}
+			取值：对象名.属性	
+				console.log(obj.uname);
+		2.使用JSON表示数组
+			使用 [] 来表示一个数组
+			在[]内允许表示若干JS对象
+		3.使用 jq 中的 each() 迭代数组
+			1. $arr.each()
+				$arr:表示的是jq中的数组对象
+				语法：
+					$arr.each(function(i,obj){
+						i : 遍历出来的元素的下标
+						obj : 遍历出来的元素
+					});
+			2.$.each()
+				语法:$.each(arr,function(i,obj){});
+					arr:JS中的普通数组
+3.服务器端处理JSON
+	1.流程
+		1.在后台先获取数据
+		2.在后台将数据转换为符合JSON格式的字符串
+		3.在后台将JSON格式的字符串响应给前端
+		4.在前端将JSON格式的字符串转换成JS对象/数组
+	2.Python中的JSON处理
+		Python中提供了 json 对象可以完成JSON的转换
+		import json
+		jsonStr=json.dumps(列表|元组|字典)
+
+	3.在前端JSON处理
+		js对象 = JSON.parse(JSON串)
+
+
+
+
+
