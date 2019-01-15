@@ -1,0 +1,121 @@
+/*login.css*/
+/*清除浏览器默认样式*/
+body, h2, p {
+    margin: 0;
+    background-color: orange;
+}
+
+a {
+    color: #64a131;
+    text-decoration: none;
+}
+
+/*2.外部容器的样式*/
+#container {
+    width: 990px;
+    margin: 0 auto;
+}
+
+/*3.顶部标题的样式*/
+h2 {
+    font-weight: normal;
+    color: #999;
+    border-bottom: 1px solid #ccc;
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+/*4.主体样式*/
+#main {
+    /*子元素浮动，解决父元素高度为零*/
+    overflow: hidden;
+}
+
+/*4.1左列*/
+.left {
+    float: left;
+    position: relative;
+}
+
+.left a {
+    position: absolute;
+    right: 170px;
+    bottom: 20px;
+    border: 1px solid #64a131;
+    border-radius: 5px;
+    width: 150px;
+    height: 45px;
+    text-align: center;
+    line-height: 45px;
+    font-size: 20px;
+}
+
+/*4.2右列*/
+.right {
+    float: right;
+    margin-top: 70px;
+    margin-right: 40px;
+}
+
+.from-line {
+    margin-bottom: 30px;
+}
+
+.from-line > p {
+    float: left;
+    width: 64px;
+    height: 40px;
+    text-align: right;
+    line-height: 40px;
+    margin-right: 40px;
+}
+
+.from-line > .uinput {
+    /*调整盒模型计算方式*/
+    box-sizing: border-box;
+    width: 300px;
+    height: 40px;
+    padding-left: 10px;
+    border: 1px solid #ccc;
+    /*默认文本框字体13.3px*/
+    font-size: 16px;
+    outline: none;
+
+}
+
+/*第三行*/
+.from-line > div > p {
+    float: right;
+}
+
+.isSave {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+}
+
+.from-line > div > p > a {
+    color: #999;
+    text-decoration: underline;
+}
+
+/*第四行*/
+.from-line .btn {
+    width: 140px;
+    height: 40px;
+    border: 1px solid #64a131;
+    border-radius: 5px;
+    background-color: #64a131;
+    color: white;
+    font-size: 20px;
+    box-sizing: border-box;
+}
+
+.from-line .registBtn {
+    float: right;
+    text-align: center;
+    line-height: 38px;
+    background-color: #fff;
+    color: #64a131;
+
+}

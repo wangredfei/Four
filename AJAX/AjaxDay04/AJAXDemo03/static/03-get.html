@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button id="btnGet">使用get方式请求数据</button>
+<script src="/static/js/jquery-1.11.3.js"></script>
+<script>
+    $(function () {
+        $("#btnGet").click(function () {
+            //使用$.get()向/03-server发送一个ajax请求
+            // /03-server 响应回来一句普通的文本
+            /*$.get('/03-server',function(data){
+              alert('响应的数据:'+data);
+            });*/
+
+
+            /**
+             * 向/03-server发送get请求
+             * 参数1:uname,值为 wangwc
+             * 参数2:uage,值为35
+             * */
+            //var params="uname=wangwc&uage=35";
+            /*var params = {
+                uname : 'weimz',
+                uage : '40'
+            }
+            $.get('/03-server',params,function(data){
+                alert('响应回来的数据:'+data);
+            });*/
+
+
+            /**
+             * 向/03-server发送请求，并接收响应结果
+             * 响应结果为JSON格式的字符串
+             * */
+            $.get('/03-server', function (data) {
+                //注意：data是不需要通过JSON.parse()进行转换的
+                //因为在$.get()的最后一个参数中指定了类型为json
+                $.each(data, function (i, obj) {
+                    console.log("用户名:" + obj.uname);
+                    console.log("昵称:" + obj.nickname);
+                });
+            }, 'json');
+        });
+    });
+</script>
+</body>
+</html>

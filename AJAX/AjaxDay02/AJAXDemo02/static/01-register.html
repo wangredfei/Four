@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="container">
+    <p>
+        登录名称: <input type="text" name="uname">
+        <span id="uname-show"></span>
+    </p>
+    <p>
+        登录密码: <input type="password" name="upwd">
+    </p>
+    <p>
+        用户昵称: <input type="text" name="nickname">
+    </p>
+    <p>
+        <button id="btnReg">注册</button>
+    </p>
+</div>
+<script src="/static/js/common.js"></script>
+<script src="/static/js/jquery-1.11.3.js"></script>
+<script>
+    $(function () {
+
+        /**
+         * 声明一个函数，实现用户名称是否存在的验证
+         * */
+        function checkUname() {
+            //声明一个返回值，表示用户名称是否存在的结果，如果是false则表示不存在
+            var ret = false;
+            //1.创建xhr
+            var xhr = createXhr();
+            //2.创建请求
+            var uname = $("[name='uname']").val();
+            var url = '/01-checkuname?uname=' + uname;
+            xhr.open('get', url, false);
+            //3.设置回调函数
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    $("#uname-show").html(xhr.responseText);
+                    if (xhr.responseText == "用户名称已存在") {
+                        ret = true;
+                    }
+                }
+            }
+            //4.发送请求
+            xhr.send(null);
+            return ret;
+        }
+
+        /**
+         * 为　name='uname' 控件绑定 blur 事件
+         * */
+        $("[name='uname']").blur(function () {
+            //调用checkUname
+            checkUname();
+        });
+
+        /**
+         * 为 #btnReg　绑定click事件
+         * */
+        $("#btnReg").click(function () {
+
+            if (checkUname()) {
+                return;
+            }
+
+            //向　/02-register 地址发送post请求
+            var xhr = createXhr();
+            xhr.open('post', '/02-register', true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    alert(xhr.responseText);
+                }
+            }
+            //4.发送请求－准备请求参数
+            var uname = $("[name='uname']").val()
+            var upwd = $("[name='upwd']").val()
+            var nickname = $("[name='nickname']").val()
+            var params = "uname=" + uname + "&upwd=" + upwd + "&nickname=" + nickname
+            console.log(params);
+            //修改Content-Type消息头的值为application/x-www-form-urlencoded
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send(params);
+
+        });
+    });
+</script>
+</body>
+</html>

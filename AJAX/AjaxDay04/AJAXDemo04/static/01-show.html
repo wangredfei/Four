@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/js/jquery-1.11.3.js"></script>
+    <script>
+        $(function () {
+            $("#btnSend").click(function () {
+                $.get('http://127.0.0.1:5000/01-server', function (data) {
+                    console.log(data);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<button id="btnSend">向01-server发送请求</button>
+</body>
+</html>

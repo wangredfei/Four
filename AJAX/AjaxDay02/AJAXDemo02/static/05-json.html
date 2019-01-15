@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/jquery-1.11.3.js"></script>
+</head>
+<body>
+<button id="btnShow">显示</button>
+<table border="1" width="300">
+    <thread>
+        <tr>
+            <th>ID</th>
+            <th>登录名</th>
+            <th>昵称</th>
+        </tr>
+    </thread>
+    <tbody id="content"></tbody>
+</table>
+<script>
+    $(function () {
+        $("#btnShow").click(function () {
+            //1. 创建xhr
+            var xhr = createXhr();
+            //2. 创建请求
+            xhr.open('get', '/05-users', true);
+            //3.设置回调函数
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    //将响应回来的数据转换成js对象/数组
+                    var arr = JSON.parse(xhr.responseText);
+                    console.log(arr);
+                    //创建空变量表示追加html的空字符串
+                    var html = "";
+                    //循环遍历数组拼html代码到空字符后
+                    $.each(arr, function (i, obj) {
+                        html += "<tr>";
+                        html += "<td>" + obj.id + "</td>";
+                        html += "<td>" + obj.uname + "</td>";
+                        html += "<td>" + obj.nickname + "</td>";
+                        html += "</tr>"
+                    });
+                    //将拼好的字符串设置给#content
+                    $("#content").html(html)
+                }
+            };
+            //4. 发送请求
+            xhr.send(null);
+        });
+    });
+</script>
+</body>
+</html>

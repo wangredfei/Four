@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>这是父模板中的显示内容</h1>
+    <h1>
+        {% block content %}
+        此段内容是可以被修改的
+        {% endblock %}
+    </h1>
+    <h1>
+        <a href="{% url 'log' %}">访问06-xxx/</a>
+    </h1>
+    <h1>
+        <a href="{% url 'reg' '2019' %}">访问07-xxx</a>
+    </h1>
+</body>
+</html>

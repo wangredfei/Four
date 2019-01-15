@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/04-update" method="post">
+    <p>
+        姓名： <input type="text" name="uname" value="{{user.uname}}">
+        <input type="hidden" name="id" value="{{user.id}}">
+    </p>
+    <p>
+        年龄： <input type="number" name="uage" value="{{user.uage}}">
+    </p>
+    <p>
+        邮箱： <input type="email" name="uemail" value="{{user.uemail}}">
+    </p>
+    <p>
+        <input type="submit">
+    </p>
+</form>
+</body>
+</html>

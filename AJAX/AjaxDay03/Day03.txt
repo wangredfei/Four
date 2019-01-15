@@ -1,0 +1,129 @@
+1.AJAX的POST请求
+	1. xhr.open('post',url,async)
+	2. xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
+	3. xhr.send('name=value&name=value')
+2.JSON
+	1.表示方式
+		1.JSON表示单个对象
+			1.{}表示一个对象
+			2.{}内部才有 key:value 表示属性(数据)
+			3.多对key:value之间采用 , 分割
+			4.key必须使用""引起来
+			5.value如果是字符串的话，必须使用""引起来
+		2.JSON表示一组对象
+			采用JS中的数组来表示一组对象
+	2.JSON的后端处理
+		1.在后端得到要处理的数据
+		2.在后端将数据转换为JSON格式的字符串
+		3.在后端将JSON格式的字符串进行响应
+		4.在前端将JSON格式的字符串解析成JS对象
+	3.服务器端的JSON处理
+		import json
+		jsonStr=json.dumps(列表|元组|字典)
+		注意：
+			列表，元组，字典 中的内容也必须是JSON可序列化的内容才可以
+
+		对于实体类：
+			class User(db.Model):
+				id = db.Column()
+				name = db.Column()
+
+				def to_dict(self):
+					dic = {
+						"id":self.id,
+						"name":self.name,
+					}
+					return dic
+			
+			users = User.query.all()
+			list = []
+			for u in users:
+				list.append(u.to_dict())
+			return json.dumps(list)
+	4.前端中的JSON处理
+		将从后端中请求回来的JSON串转换为JS对象
+		var arr=JSON.parse(JSON串)
+
+===========================================
+1.JQ 对 AJAX的支持
+	1. $obj.load()
+		作用：加载远程页面到$obj元素中
+		语法: $obj.load(url[,data,callback])
+			1.url : 表示远程请求资源的地址
+			2.data : 表示传递到服务器端的参数
+				1. 字符串
+					name=value&name=value
+					注意：如果使用字符串的话将采用get方式提交
+				2. Map / JSON / 字典
+					{
+						"name1":"value1",
+						"name2":"value2"
+					}
+					注意：如果使用Map的话将采用post方式进行提交
+			3.callback : 表示响应成功之后的处理
+				function(data){
+					data:表示的是响应回来的数据
+				}
+	2. $.get()
+		作用：采用 get 方式异步的向服务器端发送请求
+		语法：$.get(url,data,callback,type)
+			1.url:要请求的地址
+			2.data:要提交的请求参数
+				1.使用字符串拼参数
+					name=value&name=value
+				2.使用Map / JSON / 字典
+					{
+						name1:"value1",
+						name2:"value2"
+					}
+			3.callback:响应成功后的回调函数
+				function(data){
+					data : 表示的是响应回来的数据
+				}
+			4.type:指定响应回来的数据的数据类型
+				1.text:响应回来的是普通文本
+				2.html:响应回来的是html文本
+				3.json:响应回来的是JSON格式的串，可以直接转换成JS对象/数组
+				4.script:响应回来的是JS的代码片段
+	3. $.post()
+	4. $.ajax()
+		语法: $.ajax({SETTINGS});
+		SETTINGS中的常用设置选项:
+			1.url : 字符串，表示请求的地址
+			2.type : 字符串，请求方式，'get'或'post'
+			3.async : Boolean，是否采用异步方式发送请求
+			4.data : 要传递到服务器的参数
+				1.字符串
+					"name1=value1&name2=value2"
+				2.JSON / Map
+					{
+						"name1":"value1",
+						"name2":"value2"
+					}
+			5.dataType:字符串，响应回来的数据的格式
+				html,xml,text,script,json
+				jsonp : 跨域时候使用
+			6.success:请求成功时的回调函数
+				function(data){
+					data : 是响应回来的数据
+				}
+			======================================
+			7.error:请求失败时的回调函数
+			8.beforeSend:发送ajax请求之前的回调函数
+				如果 return false 的话则终止请求
+					
+			ex:
+				使用get方式 向 /05-ajax 发送一个同步请求，并接收响应数据，响应回来的内容是一个 JSON 字符串
+				$.ajax({
+					url:'/05-ajax',
+					type:'get',
+					dataType:'json',
+					async:false,
+					success:function(data){
+						data就是响应回来的数据
+					}
+				});
+			作业：
+				省市级联城市的加载
+				1.省份发生改变时，加载对应的城市信息到城市的下拉列表中
+				2.网页加载时，根据省份所显示的信息，加载对应的城市信息到城市的下拉列表中

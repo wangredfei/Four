@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--
+    1.通过http://localhost:5000/static/02-crossdomain.html来访问当前网页
+    2.跨域请求到http://127.0.0.1:5000/02-server  (点击button时)
+    3.将跨域请求回来的结果放在console中进行输出
+ -->
+<button id="btn" onclick="btnClick()">跨域请求</button>
+
+<script>
+
+    /**
+     * 处理服务器端响应回来的内容
+     * 注意：该方法由服务器端来调用
+     * 参数data：表示服务器端响应回来的数据
+     * */
+    function process_server(data) {
+        console.log(data);
+        console.log("姓名:" + data.uname);
+        console.log("年龄:" + data.uage);
+        console.log("性别:" + data.ugender);
+    }
+
+    function btnClick() {
+        //1.动态创建一对script标记
+        var script = document.createElement("script");
+        //2.为script标记指定请求地址 - src,地址为http://127.0.0.1:5000/02-server
+        script.src = "http://127.0.0.1:5000/02-server?callback=process_server";
+        //3.为script标记指定type属性值为text/javascript
+        script.type = "text/javascript";
+        //4.将创建好的script标记加载到网页上(只有加载到网页上之后才能够开始发送请求)
+        var body = document.getElementsByTagName("body")[0];
+        body.append(script);
+    }
+</script>
+
+</body>
+</html>

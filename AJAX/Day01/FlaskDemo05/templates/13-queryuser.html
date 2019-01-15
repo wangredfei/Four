@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>
+    用户姓名: <input type="text" name="uname" value="{{params.uname}}">
+    <button onclick="btnSearch()">搜索</button>
+</p>
+<p>
+<table border="1" width="350">
+    <tr>
+        <th>用户姓名</th>
+        <th>用户年龄</th>
+        <th>夫人姓名</th>
+        <th>夫人年龄</th>
+    </tr>
+    {% for user in params.users %}
+    <tr>
+        <td>{{user.uname}}</td>
+        <td>{{user.uage}}</td>
+        <td>{{user.wife.wname}}</td>
+        <td>{{user.wife.wage}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</p>
+<script>
+    function btnSearch() {
+        var url = "/13-queryuser";
+        var uname = document.getElementsByName("uname")[0].value.trim();
+        if (uname.length > 0) {
+            url += "?uname=" + uname;
+        }
+        location.href = url;
+    }
+</script>
+</body>
+</html>

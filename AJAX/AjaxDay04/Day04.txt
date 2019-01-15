@@ -1,0 +1,67 @@
+1.跨域
+	1.同源策略
+		同源：两个访问地址，具备相同的通信协议，相同的域名以及相同的端口的话，则视为 同源地址
+
+		http://www.tedu.cn/show.html
+		http://www.tedu.cn/show_server
+		以上两个地址是同源地址
+
+		http://www.tedu.cn/show.html
+		https://www.tedu.cn/show_server
+		以上两个地址是非同源地址
+
+		http://www.tedu.cn/show.html
+		http://www.tedu.cn:81/show_server
+		以上两个地址是非同源地址
+
+		http://localhost:5000/show.html
+		http://127.0.0.1:5000/show_server
+		以上两个地址是非同源地址
+
+		注意：非同源地址是不能发送AJAX请求
+
+		http://127.0.0.1:5000/static/01-xx.html
+		http://localhost:5000/01-server
+
+		非同源请求称为"跨源请求"也叫"跨域请求"
+
+	2.解决方案
+		在HTTP协议中<script> 和 <img> 是不受同源策略的限制的。
+
+		方案：通过 <script> 标记向服务器端发送请求，由服务器端响应回JS的代码片段(包含服务器响应回的数据)，再交给网页去执行
+	3.jq对跨域的支持
+		$.ajax({
+			url : '跨域地址',
+			type : 'get',
+			dataType : 'jsonp',
+			success:function(data){
+				
+			}
+		});
+
+
+		jsonp - json with padding
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+通过 http://127.0.0.1:5000/static/01-show.html 网页中发送 ajax 请求到 
+http://127.0.0.1:5000/01-server
+
+通过 http://localhost:5000/static/01-show.html 网页中发送 ajax 请求到 
+http://127.0.0.1:5000/01-server
+
+
+	

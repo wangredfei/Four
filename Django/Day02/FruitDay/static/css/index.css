@@ -1,0 +1,181 @@
+/*页面基础样式*/
+body{
+	font:12px "微软雅黑","黑体";
+	color:#9a9a9a;
+}
+/*清除默认样式*/
+body,h1,h2,h3,h4,h5,h6,p,ul,ol{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+a{
+	text-decoration:none;
+	color:#9a9a9a;
+}
+a:hover{
+	color:#64a131;
+}
+
+/*页面整体宽度和居中效果*/
+#container{
+	width:990px;
+	margin:0 auto;
+}
+
+/*1. 导航*/
+#nav{
+	background:#eee;
+	height:30px;
+	line-height:30px;
+}
+/*右侧导航*/
+#nav .rightNav{
+	float:right;
+}
+#nav .rightNav>li{
+	float:left;
+	padding:0 5px;
+	/*border-right:1px solid black;
+	margin-right:10px;
+	margin-top:7px;
+	*/
+}
+#nav .rightNav>li>b{
+	margin-right:10px;
+	border-left:1px solid gray;
+}
+/*左侧导航*/
+#nav .leftNav>li{
+	float:left;
+	padding-left:10px;
+}
+#nav .leftNav>li>i{
+	display:inline-block;
+	width:0;
+	height:0;
+	border:6px solid transparent;
+	border-top:6px solid black;
+	position:relative;
+	top:4px;
+}
+/*下拉菜单*/
+#nav .address{
+	position:relative;
+}
+#nav .select{
+	position:absolute;
+	display:none;
+	z-index:100;
+	color:#000;
+	cursor:pointer;
+}
+#nav .address:hover .select{
+	display:block;
+	background:rgba(255,0,0,.5);
+}
+#nav .select>li:hover{
+	font-weight:bold;
+}
+
+/*2. 横幅*/
+#banner{
+	margin:15px 0;
+	height:207px;
+	position:relative;
+}
+#banner img{
+	width:100%;
+}
+/*除第一张图片外,其他图片元素都隐藏*/
+#banner img:not(:first-child){
+	display:none;
+}
+#banner .imgNav{
+	position:absolute;
+	bottom:20px;
+	right:20px;
+}
+#banner li{
+	float:left;
+	width:20px;
+	height:20px;
+	border-radius:50%;
+	color:#fff;
+	background:gray;
+	text-align:center;
+	line-height:20px;
+	margin:0 10px;
+}
+/*第一张图片默认显示,索引背景色为红色*/
+#banner li:first-child{
+	background:red;
+}
+/*3. 推荐*/
+#commend{
+	/*解决行内元素由于换行导致的水平间隙*/
+	font-size:0;
+	height:112px;
+}
+#commend img{
+	width:240px;
+	margin-right:10px;
+}
+#commend .lastImg{
+	margin:0;
+}
+/*4. 主体*/
+#main{
+	margin-top:25px;
+}
+/*标题*/
+#main .goodsTitle{
+	border-top:1px solid #ccc;
+	padding-top:15px;
+	padding-bottom:10px;
+}
+#main .goodsTitle>a{
+	color:#333;
+	float:right;
+}
+/* 商品信息展示 */
+#main ul{
+	overflow:hidden;
+}
+#main ul>li{
+	float:left;
+	width:190px;
+	margin-right:10px;
+}
+/*每行第五个元素取消外边距*/
+#main .no-margin{
+	margin:0;
+}
+/* 图片缩放效果 */
+#main ul div{
+	width:190px;
+	height:190px;
+	/* 图片放大之后溢出不可见 */
+	overflow:hidden;
+}
+#main ul div>img{
+	width:190px;
+	transition:.3s;
+}
+#main ul div>img:hover{
+	transform:scale(1.1);
+}
+#main ul>li>a{
+	float:right;
+	margin-top:3px;
+}
+#main ul p{
+	margin-left:3px;
+	margin-top:5px;
+	margin-bottom:3px;
+	color:#555;
+}
+#main ul span{
+	margin-left:10px;
+}
+

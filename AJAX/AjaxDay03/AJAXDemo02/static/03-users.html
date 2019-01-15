@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button id="btnShow">显示所有的user</button>
+<script src="/static/js/common.js"></script>
+<script src="/static/js/jquery-1.11.3.js"></script>
+<script>
+    $(function () {
+        $("#btnShow").click(function () {
+            var xhr = createXhr();
+            xhr.open('get', '/03-users', true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+//                console.log(xhr.responseText);
+                    var resText = xhr.responseText;
+                    //1.按　| 拆分出每个对象
+                    userArr = resText.split('|')
+                    for (var i = 0; i < userArr.length; i++) {
+                        var user = userArr[i];
+                        //2.按,拆分出每个属性
+                        var attrs = user.split(',');
+                        for (var j = 0; j < attrs.length; j++) {
+                            console.log(attrs[j]);
+                        }
+                    }
+                }
+            }
+            xhr.send(null);
+        });
+    });
+</script>
+</body>
+</html>

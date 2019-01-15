@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h3>uname:{{ uname }}</h3>
+    <h3>uage:{{ uage }}</h3>
+    <h3>dic:{{ dic }}</h3>
+    <h3>dic['WWC']:{{ dic.WWC }}</h3>
+    <h3>list:{{ list }}</h3>
+    <h3>list[1]:{{ list.1 }}</h3>
+    <h3>
+        循环遍历list:
+        {% for str in list %}
+            <p>
+                元素{{ forloop.counter }}:{{ str }}
+            </p>
+        {% endfor %}
+    </h3>
+    <h3>person:{{ person }}</h3>
+    <h3>person.uname:{{ person.uname }}</h3>
+    <h3>person.intro():{{ person.intro }}</h3>
+</body>
+</html>

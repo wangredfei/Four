@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<script src="/static/jquery-1.11.3.js"></script>
+<script>
+    var arr = [
+        {
+            "id": 1,
+            "uname": "wangwc",
+            "upwd": "123456",
+            "nickname": "王老师"
+        },
+        {
+            "id": 2,
+            "uname": "weimz",
+            "upwd": "654321",
+            "nickname": "魏老师"
+        },
+        {
+            "id": 3,
+            "uname": "lvze",
+            "upwd": "987654",
+            "nickname": "吕老师"
+        }
+    ];
+
+    /*$(arr).each(function(i,obj){
+        console.log("下标:"+i);
+        console.log("登录名称:"+obj.uname);
+        console.log("用户昵称:"+obj.nickname);
+    });*/
+
+    $.each(arr, function (i, obj) {
+        console.log("下标:" + i);
+        console.log("ID:" + obj.id);
+        console.log("用户昵称:" + obj.nickname);
+    });
+
+    /*for(var i=0;i<arr.length;i++){
+        var obj=arr[i];
+        console.log("ID:"+obj.id);
+        console.log("登录名:"+obj.uname);
+        console.log("密码:"+obj.upwd);
+        console.log("昵称:"+obj.nickname);
+    }*/
+</script>
+</body>
+</html>

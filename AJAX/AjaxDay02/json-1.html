@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="/static/jquery-1.11.3.js"></script>
+    <script>
+
+        var arr = [
+            {
+                "uname": "王老师",
+                "ugender": "男",
+                "uemail": "wangwc@163.com"
+            },
+            {
+                "uname": "王夫人",
+                "ugender": "男",
+                "uemail": "wangfw@163.com"
+            },
+            {
+                "uname": "王小超",
+                "ugender": "男",
+                "uemail": "wangxc@163.com"
+            }
+        ];
+
+
+        $(function () {
+            $("#btnShow").click(function () {
+                var html = "";
+                //$.each(arr,function(i,obj){});
+                $(arr).each(function (i, obj) {
+                    html += "<tr>";
+                    html += "<td>" + obj.uname + "</td>";
+                    html += "<td>" + obj.ugender + "</td>";
+                    html += "<td>" + obj.uemail + "</td>";
+                    html += "</tr>";
+                });
+                $("#content").html(html);
+            });
+        });
+    </script>
+</head>
+<body>
+<button id="btnShow">显示</button>
+<table border="1" width="300">
+    <thead>
+    <tr>
+        <th>姓名</th>
+        <th>性别</th>
+        <th>邮箱</th>
+    </tr>
+    </thead>
+    <tbody id="content"></tbody>
+</table>
+</body>
+</html>

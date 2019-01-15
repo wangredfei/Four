@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>
+    <select id="selCourse" onchange="loadTeachers(this.value)">
+        <option value="-1">全部</option>
+        {% for course in params.courses %}
+        <option value="{{course.id}}"
+                {% if params.course and params.course.id== course.id %}
+                selected
+                {% endif %}
+        >
+            {{course.cname}}
+        </option>
+        {% endfor %}
+    </select>
+</p>
+<p>
+<table border="1" width="300">
+    <tr>
+        <th>姓名</th>
+        <th>年龄</th>
+        <th>课程</th>
+    </tr>
+    {% for tea in params.teachers %}
+    <tr>
+        <td>{{tea.tname}}</td>
+        <td>{{tea.tage}}</td>
+        <td>{{tea.course.cname}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</p>
+
+
+<script>
+    function loadTeachers(course_id) {
+        //alert('课程ID为:'+course_id);
+        window.location.href = "/11-showteachers?id=" + course_id
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button id="btnLoad">加载数据</button>
+<button id="btnPage">加载页面</button>
+<div id="show"></div>
+<script src="/static/js/jquery-1.11.3.js"></script>
+<script>
+    $(function () {
+        /**
+         * 使用jquery提供的load()加载/01-load响应回来的内容，并显示在#show元素中
+         * */
+        $("#btnLoad").click(function () {
+            //采用字符串拼参数 - get
+            //var params="name=zsf&age=80";
+            //采用js对象的方式传参 - post
+            var params = {
+                "name": "金花婆婆",
+                "age": "85"
+            }
+            $("#show").load("/01-load", params, function (data) {
+                //data 表示响应回来的数据
+                $("#show").html("<h1>" + data + "</h1>");
+            });
+        });
+
+        /**
+         * 使用jquery提供的load()加载02-head.html网页到#show中
+         * */
+        $("#btnPage").click(function () {
+            $("#show").load("02-head.html")
+        });
+    });
+</script>
+</body>
+</html>

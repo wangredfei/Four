@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/js/jquery-1.11.3.js"></script>
+    <script>
+
+        function loadPro() {
+            $.ajax({
+                url: '/05-loadpro',
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    //<option value='1'>黑龙江</option>
+                    var html = "";
+                    $.each(data, function (i, obj) {
+                        html += "<option value='" + obj.id + "'>";
+                        html += obj.pname;
+                        html += "</option>";
+                    });
+                    $("#selPro").html(html);
+                }
+            });
+        }
+
+        $(function () {
+            loadPro();
+        })
+    </script>
+</head>
+<body>
+<select id="selPro"></select>
+<select id="selCity"></select>
+</body>
+</html>
