@@ -1,0 +1,154 @@
+1.forms模块
+	1.通过 forms 模块获取表单数据
+		1.通过forms.Form的子类的构造器来接收post数据
+			form = RemarkForm(request.POST)
+		2.必须使form通过验证，才能取值
+			form.is_valid()
+				返回True:通过验证
+				返回False:未通过验证
+		3.获取表单数据
+			通过 form.cleaned_data 来接收表单数据
+
+		练习：
+			1.创建一个数据库 - djangodb
+			2.创建实体类 - Users
+				uname - varchar(30)，upwd - varchar(30)
+				uage - int，uemail - varchar(30)
+			3.创建forms模块 - forms.py
+				1.创建RegisterForm -> forms.Form
+				2.属性根据Users实体类创建
+			4.解析forms并接收数据
+				1.将 RegisterForm 的对象发送到模板
+					04-register/ -> 04-register.html
+				2.post提交时接收数据，并将数据保存回数据库
+	2.forms模块的高级处理
+		将 Models 和 Forms 结合到一起使用
+		1. 在forms.py中创建class
+			继承自 forms.ModelForm
+		2. 创建内部类 Meta，关联Model
+			1.model : 指定要关联的实体类
+			2.fields : 指定从Model中取哪些字段生成控件
+				1.取值为 "__all__"
+					取全部属性生成控件
+				2.取值为 列表
+					将允许生成控件的属性名放在列表中
+			3.labels : 指定每个属性对应的label值
+				取值为字典
+					labels = {
+						'uname':'登录名称',
+						... ...
+					}
+
+		练习：使用ModelForm完成
+			1.从 Users 类中取出 uname,upwd两个字段生成表单
+			2.提交数据时验证登录的成功与否
+	3.内置小部件 - widget
+		1.什么是小部件
+			表示的是生成到网页上的控件的类型以及其他的一些html属性
+		2.常用小部件类型
+			1.TextInput : type="text"
+			2.PasswordInput : type="password"
+			3.NumberInput : type="number"
+			4.EmailInput :type="email"
+			5.URLInput :type="url"
+			6.HiddenInput : type="hidden"
+			7.CheckboxInput : type="checkbox"
+			8.CheckboxSelectMultiple : type="checkbox"
+				以 <ul>和<li> 生成多个 checkbox 控件
+			9.RadioSelect : type="radio"
+				以 <ul>和<li> 生成多个 radio 控件
+			10.Textarea : <textarea></textarea>
+			11.Select :<select></select>
+			12.SelectMultiple:
+				<select multiple></select>
+		3.小部件的使用
+			1.继承自forms.Form
+				1.基本版
+					1.语法
+						属性=forms.CharField(
+							label='xxx',
+							widget=forms.小部件类型
+						)
+					2.示例
+						upwd = forms.CharField(
+							label='用户密码',
+							widget=forms.PasswordInput
+						)
+				2.高级版
+					1.特征
+						在指定控件类型的基础之上还能指定控件的一些html属性
+					2.语法
+						属性 = forms.CharField(
+							label = '标签',
+							widget = forms.小部件类型(
+								attrs={
+									'html属性名':'值',
+									'html属性名':'值',
+								}
+							)
+						)
+			2.继承自forms.ModelForm
+				class LoginForm(forms.ModelForm):
+					class Meta:
+						model = Users,
+						fields = ['uname','upwd']
+						labels = {
+							'uname':'用户名称',
+							'upwd':'用户密码',
+						}
+						#指定小部件
+						widgets = {
+							'upwd':forms.PasswordInput(
+								attrs={
+									'html属性名':'值'
+								}
+							),
+						}
+						果园登录，改版成forms与models的结合
+2.cookie 和 session
+	1.cookie 实现
+		1.Django中使用cookie
+			使用 响应对象 将cookie保存进客户端
+			1.响应对象
+				1.HttpResponse()
+					resp = HttpResponse("响应一句话")
+				2.render()
+					resp = render(request,'xxx.html',locals())
+				3.redirect()
+					resp = redirect('/')
+			2.保存cookie
+				响应对象.set_cookie(key,value,expires)
+					key:cookie的名字
+					value:cookie的值
+					expires:默认是以 s 为单位的数字
+						取值为0表示要删除该cookie值
+			3.获取cookie
+				request.COOKIES
+				封装了当前站点下所有的cookie - 字典
+	2.session 实现
+		1.保存session的值到服务器
+			request.session['KEY']=VALUE
+		2.从服务器中获取session的值
+			VALUE=request.session['KEY']
+		3.删除session值
+			del request.session['KEY']
+		4.在 settings.py中有关session的设置
+			1.SESSION_COOKIE_AGE
+				作用：指定sessionid在cookies中保存时长
+				SESSION_COOKIE_AGE=60*60*24*2
+			2.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+				只要浏览器关闭，session就失效
+
+
+
+
+
+
+
+{
+	'subject': '东西不错', 
+	'message': '东西很好很实用', 
+	'email': 'wangwc@163.com', 
+	'isSaved': True, 
+	'level': '1'
+}

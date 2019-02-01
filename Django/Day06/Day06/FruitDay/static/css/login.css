@@ -1,0 +1,108 @@
+/*1. 清除浏览器默认样式*/
+body,h2,p{
+	margin:0;
+	color: #999;
+}
+a{
+	color:#64A131;
+	text-decoration: none;
+}
+/*2. 外部容器的样式*/
+#container{
+	width: 990px;
+	margin: 0 auto;
+}
+/*3. 顶部标题的样式*/
+h2{
+	font-weight: normal;
+	color: #999;
+	border-bottom: 1px solid #ccc;
+	padding: 20px 0;
+	margin-bottom: 30px;
+}
+/*4. 主体样式*/
+#main{
+	/*子元素浮动,解决父元素高度为0*/
+	overflow: hidden;
+}
+/*4.1 左列*/
+.left{
+	float: left;
+	position: relative;
+}
+.left a{
+	position: absolute;
+	right: 170px;
+	bottom: 20px;
+	border: 1px solid #64A131;
+	border-radius:5px;
+	width: 150px;
+	height: 45px;
+	text-align: center;
+	line-height: 45px;
+	font-size: 20px;
+}
+
+/*4.2 右列*/
+.right{
+	float: right;
+	margin-top: 70px;
+	margin-right: 40px;
+}
+.form-line{
+	margin-bottom:30px;
+}
+.form-line>p{
+	float: left;
+	width: 64px;
+	height: 40px;
+	text-align: right;
+	line-height: 40px;
+	margin-right: 40px;
+}
+.form-line>.uinput{
+	/*调整盒模型计算方式*/
+	box-sizing: border-box;
+	width: 300px;
+	height: 40px;
+	padding-left: 10px;
+	border: 1px solid #ccc;
+	/*默认文本框字体13.3px*/
+	font-size: 16px;
+	outline: none;
+}
+/*第三行*/
+.form-line>div>p{
+	float: right;
+}
+.isSave{
+	width: 18px;
+	height: 18px;
+	vertical-align: middle;
+}
+.form-line>div>p>a{
+	color: #999;
+	text-decoration: underline;
+}
+/*第四行*/
+.form-line .btn{
+	width: 140px;
+	height: 40px;
+	border: 1px solid #64a131;
+	border-radius:5px;
+	background-color: #64A131;
+	color:white;
+	font-size: 20px;
+	box-sizing: border-box;
+}
+.form-line .registBtn{
+	float: right;
+	text-align: center;
+	line-height: 38px;
+	background-color: #fff;
+	color:#64a131;
+}
+
+
+
+

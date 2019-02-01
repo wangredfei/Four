@@ -1,0 +1,85 @@
+商品类别表 - GoodsType
+	1.title - 类别名称
+	2.picture - 类别图片
+	3.desc - 类别描述
+
+商品表 - Goods
+	1.title - 商品名称
+	2.price - 商品价格-DecimalField(max_digists,dicmal_places)
+	3.spec - 商品规格
+	4.picture - 商品图片
+		upload_to = 'static/upload/goods'
+	5.goodsType - 商品类别
+		与GoodsType是一对多关系
+	6.isActive - 是否上架，默认为True
+
+[
+	{
+		'type':'商品类型JSON串',
+		'goods':'该类型对应的商品们的JSON串'
+	},
+	{
+		'type':'商品类型JSON串',
+		'goods':'该类型对应的商品们的JSON串'
+	},
+	{
+		'type':'商品类型JSON串',
+		'goods':'该类型对应的商品们的JSON串'
+	},
+	{
+		'type':'商品类型JSON串',
+		'goods':'该类型对应的商品们的JSON串'
+	}
+]
+
+
+
+
+
+
+[{"type": "{\"desc\": \"\\u793c\\u54c1\\u5361\\u5238\\u7684\\u76f8\\u5173\\u5185\\u5bb9\", \"title\": \"\\u793c\\u54c1\\u5361\\u5238\", \"picture\": \"static/upload/goodstype/t4.png\"}", "goods": "[{\"model\": \"index.goods\", \"pk\": 1, \"fields\": {\"title\": \"\\u793c\\u54c1\\u5361\\u52381\", \"price\": \"35.50\", \"spec\": \"1\\u4e2a\", \"picture\": \"static/upload/goods/1-270x270-430-9RBRWTU9.jpg\", \"goodsType\": 1, \"isActive\": true}}, {\"model\": \"index.goods\", \"pk\": 2, \"fields\": {\"title\": \"\\u793c\\u54c1\\u5361\\u52382\", \"price\": \"78.49\", \"spec\": \"1kg\", \"picture\": \"static/upload/goods/1-270x270-435-8829CP99.jpg\", \"goodsType\": 1, \"isActive\": true}}, {\"model\": \"index.goods\", \"pk\": 3, \"fields\": {\"title\": \"\\u793c\\u54c1\\u5361\\u52383\", \"price\": \"99.00\", \"spec\": \"500g\", \"picture\": \"static/upload/goods/1-270x270-695-F2BSB4DC.jpg\", \"goodsType\": 1, \"isActive\": true}}, {\"model\": \"index.goods\", \"pk\": 4, \"fields\": {\"title\": \"\\u793c\\u54c1\\u5361\\u52384\", \"price\": \"789.00\", \"spec\": \"1kg\", \"picture\": \"static/upload/goods/1-270x270-2114-226C8S26.jpg\", \"goodsType\": 1, \"isActive\": true}}, {\"model\": \"index.goods\", \"pk\": 5, \"fields\": {\"title\": \"\\u793c\\u54c1\\u5361\\u52385\", \"price\": \"999.00\", \"spec\": \"1\\u4e2a\", \"picture\": \"static/upload/goods/1-270x270-3356-T4P73D4B.jpg\", \"goodsType\": 1, \"isActive\": true}}]"}, {"type": "{\"desc\": \"\\u5bb6\\u5ead\\u91cf\\u8d29\\u76f8\\u5173\\u5185\\u5bb9\", \"title\": \"\\u5bb6\\u5ead\\u91cf\\u8d29\", \"picture\": \"static/upload/goodstype/t1.png\"}", "goods": "[{\"model\": \"index.goods\", \"pk\": 6, \"fields\": {\"title\": \"\\u5bb6\\u5ead\\u91cf\\u8d291\", \"price\": \"123.00\", \"spec\": \"1\\u4e2a\", \"picture\": \"static/upload/goods/1-270x270-2109-SDK5WUW8.jpg\", \"goodsType\": 2, \"isActive\": true}}, {\"model\": \"index.goods\", \"pk\": 7, \"fields\": {\"title\": \"\\u5bb6\\u5ead\\u91cf\\u8d292\", \"price\": \"99.00\", \"spec\": \"500kg\", \"picture\": \"static/upload/goods/1-270x270-27316-F2BUCPRH.jpg\", \"goodsType\": 2, \"isActive\": true}}]"}, {"type": "{\"desc\": \"\\u5168\\u7403\\u9c9c\\u679c\\u76f8\\u5173\\u5185\\u5bb9\", \"title\": \"\\u5168\\u7403\\u9c9c\\u679c\", \"picture\": \"static/upload/goodstype/t2.png\"}", "goods": "[{\"model\": \"index.goods\", \"pk\": 9, \"fields\": {\"title\": \"\\u5168\\u7403\\u9c9c\\u679c1\", \"price\": \"31.98\", \"spec\": \"125g\", \"picture\": \"static/upload/goods/1-270x270-2114-226C8S26_0MGW2j2.jpg\", \"goodsType\": 3, \"isActive\": true}}]"}, {"type": "{\"desc\": \"\\u751f\\u9c9c\\u7f8e\\u98df\\u76f8\\u5173\\u5185\\u5bb9\", \"title\": \"\\u751f\\u9c9c\\u7f8e\\u98df\", \"picture\": \"static/upload/goodstype/t3.png\"}", "goods": "[{\"model\": \"index.goods\", \"pk\": 8, \"fields\": {\"title\": \"\\u751f\\u9c9c\\u7f8e\\u98df1\", \"price\": \"77.85\", \"spec\": \"1\\u5f20\", \"picture\": \"static/upload/goods/1-270x270-2114-226C8S26_v1wLosy.jpg\", \"goodsType\": 4, \"isActive\": true}}]"}]
+
+
+
+
+
+
+
+
+
+
+
+
+
+[
+	{
+		"model": "index.users", 
+		"pk": 1, 
+		"fields": {
+			"uname": "wangwc", 
+			"upwd": "lixiaochao", 
+			"uage": 37, 
+			"uemail": "lixiaochao@163.com"
+			}
+		}, 
+	{"model": "index.users", "pk": 2, "fields": {"uname": "rapwang", "upwd": "lixiaochao", "uage": 37, "uemail": "rapwang@163.com"}}]
+
+
+	{
+		'loginStatus' : 1,
+		'uname' : 'xxxx'
+	}
+
+	{
+		'loginStatus' : 0
+	}
+
+
+
+
+
+
+
+
+
+

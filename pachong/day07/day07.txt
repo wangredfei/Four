@@ -1,0 +1,205 @@
+Day06回顾
+1、多线程爬虫
+  1、URL队列 ：put(url)
+  2、PARSE队列：get(url)->put(html)
+  3、创建多个线程
+2、一边采集,一边解析
+  while True:
+      try:
+        ....get(block=True,timeout=2)
+        ...
+      except:
+        break
+3、先采集,再解析
+  while True:
+      if not parseQueue.empty():
+          ...get()
+      else:
+          break 
+4、BeautifulSoup
+  1、使用流程
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html,'html.parser')
+    rList = soup.find_all('div',{})
+    rObj = soup.find('div',{})
+  2、支持解析库
+    lxml、html.parser、xml
+  3、soup.find_all('div',{'class':'abc'})
+  4、soup.find('div',{'class':'abc'})
+  5、节点对象.get_text() : 文本(包含子节点)
+     节点对象.string     : 文本(不包含子节点)
+5、scrapy框架 ：异步处理框架
+  1、组成
+    Engine、Scheduler、Downloader、Item Pipeline、Spider、Downloader Middlewares、Spider Middlewares
+  2、流程
+    1、Engine向Spider索要URL(第1个要爬取的)
+    2、交给Scheduler入队列
+    3、出队列,通过Downloader Middlewares给下载器
+    4、下载完后,通过Spider Middlewares交给Spider
+    5、Spider数据提取：
+       1、数据交给Item Pipeline
+       2、需要跟进URL,交给Scheduler入队列
+6、创建项目流程
+  1、scrapy startproject Lianjia
+  2、cd Lianjia
+  3、scrapy genspider lianjia lianjia.com
+  4、items.py : 定义要爬取的数据结构
+     class LianjiaItem(scrapy.Item):
+         name = scrapy.Field()
+	 price = scrapy.Field()
+  5、lianjia.py
+    import scrapy
+    class LianjiaSpider(scrapy.Spider):
+        name = 'lianjia'
+	allowed_domains = ['lianjia.com']
+	start_urls = ['http://www.lianjia.com/']
+	
+	def parse(self,response):
+	    pass 
+  6、pipelines.py
+    class LianjiaPipeline(object):
+        def process_item(self,item,spider):
+	    pass
+    class LianjiaMysqlPipeline(object):
+        def process_item(self,item,spider):
+	    pass
+  7、settings.py
+    1、ROBOTSTXT_OBEY = False
+    2、USER_AGENT = 
+    3、DEFAULT_REQUEST_HEADERS = {}
+    4、ITEM_PIPELINES = {
+        'Lianjia.pipelines.LianjiaPipeline' : 100,
+	'Lianjia.pipelines.LianjiaMysql...' : 200,
+      }
+  8、scrapy crawl lianjia
+7、pycharm运行爬虫项目
+  1、begin.py(scrapy.cfg同级目录)
+   from scrapy import cmdline
+   cmdline.execute('scrapy crawl lianjia'.split())
+************************************************
+1、yield回顾
+  1、作用:把1个函数当做1个生成器来使用
+  2、特点:让函数暂停,等待下1次调用
+2、Csdn项目
+  1、网址 ：https://blog.csdn.net/cpongo4/article/details/86613730
+  2、标题、发布时间、阅读数
+    标题: //h1[@class="title-article"]/text()
+    时间: //span[@class="time"]/text()
+    数量: //span[@class="read-count"]/text()
+  3、流程
+    1、scrapy startproject Csdn
+    2、scrapy genspider csdn blog.csdn.net
+    3、item.py
+    4、csdn.py
+       from Csdn.items import CsdnItem
+       def parse(self,response):
+           item = CsdnItem()
+	   ...
+	   yield item
+    5、pipelines.py
+       def process_item(self,item,spider):
+           ....
+	   return item
+    6、settings.py
+       ITEM_PIPELINES = {
+           'Csdn.pipelines.CsdnPipeline' : 300,
+       }
+    7、scrapy crawl csdn
+3、知识点
+  1、extract() : 获取选择器对象中的文本内容
+    response.xpath('') 
+      结果: [<selector ... data='文本内容'>,<>]
+    response.xpath('').extract()
+      结果: ['文本内容1','文本内容2']
+  2、pipelines.py中必须有1个函数叫：
+     def process_item(self,item,spider):
+         return item
+4、警告级别(日志文件)
+   LOG_LEVEL = ''
+   LOG_FILE = '文件名.log'
+   5层日志级别
+     1、CRITICAL : 严重错误
+     2、ERROR    : 普通错误(显示ERROR和严重错误)
+     *3、WARNING : 警告信息(显示WARNING及以上信息)
+     4、INFO     : 一般信息(显示INFO及以上级别)
+     5、DEBUG    : 显示DEBUG及以上级别信息
+5、腾讯招聘项目
+  1、网址调试信息:https://hr.tencent.com/position.php?start=？？
+  2、xpath表达式
+    基准 ： 
+      //tr[@class="even"] | //tr[@class="odd"]
+    1、职位名称:  ./td[1]/a/text()
+    2、职位类别:  ./td[2]/text()
+    3、招聘人数:  ./td[3]/text()
+    4、招聘地点:  ./td[4]/text()
+    5、发布时间:  ./td[5]/text()
+    6、职位链接:  ./td[1]/a/@href
+6、保存为csv、json文件(-o选项)
+  1、json文件
+    scrapy crawl tengxun -o tengxun.json
+    设置导出编码 : FEED_EXPORT_ENCODING = 'utf-8'
+  2、csv文件
+    scrapy crawl tengxun -o tengxun.csv
+    csv文件出现空行解决方法(修改源码)
+      D:\Anaconda3\Lib\site-packages\scrapy\exporters.py 做如下修改(搜索'csv')：
+        self.stream = io.TextIOWrapper(
+            file,
+            newline='', # 添加此行
+8、图片管道(360美女图片抓取)
+  1、通过F12抓包,抓取到QueryString中参数如下：
+    ch: beauty # 图片分类
+    sn: 90
+      # sn表示图片编号,0(1-30张),30(31-60张)
+    listtype: new
+    temp: 1
+  2、Request URL：
+    http://image.so.com/zj?ch=beauty&sn=90&listtype=new&temp=1
+  ***3、项目实现
+    1、在items.py中定义图片链接字段
+    2、爬虫文件,可重写start_requests方法
+       1、去掉 start_urls = ['']
+       2、def start_requests(self):
+               ... ...
+	       yield scrapy.Request(url,callback=)
+    3、管道文件pipelines.py
+       # 导入scrapy定义好的图片管道类
+       from scrapy.pipelines.images import ImagesPipeline
+       # 定义类,继承图片管道类
+       class SoPipeline(ImagesPipeline):
+           # 重写方法
+	   def get_media_requests(self,item,info):
+	      # 把图片链接发给调度器
+	      yield scrapy.Request(item['imgLink']
+    4、settings.py中定义图片存储路径
+       IMAGES_STORE = 'D:\\爬虫'
+作业：
+盗墓笔记：http://www.daomubiji.com/dao-mu-bi-ji-1
+
+标题名称
+章节数量
+章节名称
+链接
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

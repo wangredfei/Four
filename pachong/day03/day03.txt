@@ -1,0 +1,203 @@
+Day02回顾
+1、关于正则分组
+  1、分组(想要抓取什么内容就加小括号())
+  2、正则方法
+    p = re.compile(r'',re.S)
+    rList = p.findall(html)
+    结果：[(),(),(),()]
+  3、贪婪匹配 .*
+  4、非贪婪匹配 .*? 或者 [\s\S]*?
+2、爬取网站思路
+  1、找URL规律,分析POST请求数据
+  2、写正则表达式
+  3、定义类,写程序框架
+  4、补全代码
+3、存入csv文件
+  import csv 
+  with open('XXX.csv','w',newline='') as f:
+      writer = csv.writer(f)
+      writer.writerow([])
+4、MySQL流程
+  1、db = pymysql.connect('IP地址',......)
+  2、cursor = db.cursor()
+  3、cursor.execute('sql命令',[])
+  4、db.commit()
+  5、cursor.close()
+  6、db.close()
+5、MongoDB流程
+  1、conn = pymongo.MongoClient('IP地址',27017)
+  2、db = conn['库名']
+  3、myset = db['集合名']
+  4、myset.insert_one({字典})
+  ## 命令行操作
+  >>> show dbs
+  >>> use 库名
+  >>> show collections | show tables
+  >>> db.集合名.find().pretty()
+  >>> db.集合名.count()
+  >>> db.dropDatabase()
+6、远程连接MySQL数据库
+  1、开启远程连接
+    sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
+    #bind-address = 127.0.0.1
+  2、重启数据库服务
+    sudo /etc/init.d/mysql restart
+    sudo service mysql restart
+  3、授权
+    mysql>grant all privileges on *.* to '用户名'@'%' identified by '密码' with grant option;
+    ## 刷新权限
+    mysql>flush privileges;
+  4、设置防火墙,允许外部访问本机3306端口
+    sudo ufw allow 3306
+    sudo ufw allow 27017
+7、Ubuntu中防火墙(ufw)基本操作
+  1、状态 ：sudo ufw status
+  2、打开 ：sudo ufw enable
+  3、关闭 ：sudo ufw disable
+  4、规则 ：sudo ufw allow 端口号
+8、Anaconda安装模块
+  1、右键,以管理员身份打开：Anaconda Prompt
+  2、(base)C:\Users\Administrator：执行安装命令
+     conda install 模块名
+9、Fiddler常用菜单
+  1、Inspector ：请求/响应两部分
+  2、常用选项
+     1、Headers
+     2、WebForms ：Form表单数据<body>
+     3、Raw ：将整个请求显示为纯文本
+********************************************
+1、requests模块
+  1、安装
+    管理员Anaconda Prompt: conda install requests
+  2、常用方法
+    1、requests.get(url,headers=headers)
+       向网站发起请求并获取响应对象res
+    2、响应对象(res)属性
+       1、encoding : 响应字符编码
+          res.encoding = 'utf-8'
+       2、text   ：字符串
+       3、content: 字节流
+       4、status_code : HTTP响应码
+       5、url ：返回实际数据的URL
+    3、非结构化数据保存(图片)
+       html = res.content
+       with open('XXX','wb') as f:
+           f.write(html)
+2、get()方法中参数
+  1、查询参数(params)
+    params : 字典
+    res = requests.get(url,params=params,header..)
+    # 自动对params字典进行编码,然后和url进行拼接
+    输入搜索内容,爬取第2页的内容
+  2、代理参数(proxies)
+    1、获取代理IP的网站
+       西刺代理网站
+       快代理
+       全网代理
+    2、普通代理
+      1、格式:proxies={'协议':'协议://IP:端口号'}
+      2、测试网站
+         http://httpbin.org/get
+	 https://www.whatismyip.com/ (每天5次)
+    3、私密代理
+       1、格式
+         proxies = {"协议":"协议://用户名:密码@IP地址:端口号'}
+  3、Web客户端验证(auth)
+    1、auth=('用户名','密码')
+       auth=('tarenacode','code_2013')
+    2、达内笔记下载
+      1、网址：http://code.tarena.com.cn
+      2、正则：<a href="(.*?)/.*?</a>
+      3、参数：auth=('tarenacode','code_2013')
+  4、SSL证书认证参数(verify)
+    1、verify=True:默认,进行SSL证书认证
+    2、verify=False:不去检查认证
+    3、res = requests.get(url,headers=headers,verify=False)
+    抛出异常：SSLError
+3、request.post()
+  1、requests.post(url,data=data,headers=headers)
+  2、data ：Form表单数据,字典,不用编码,不用转码
+4、有道翻译破解案例
+  1、F12,抓包,多抓几次观察Form表单中数据变化
+    salt、sign、ts、bv(没变)
+  2、加密一定为js文件做的,抓js文件,找到相关加密算法
+  3、F12,浏览器重新向有道翻译发起请求,抓到1个js文件：fanyi.min.js, Preview选项查看js代码,放到本地文件
+  4、Ctrl+F搜索想要的字段,salt、sign,找到8240多行
+      var t = n.md5(navigator.appVersion)
+        , r = "" + (new Date).getTime()
+        , i = r + parseInt(10 * Math.random(), 10);
+      return {
+          ts: r,
+          bv: t,
+          salt: i,
+          sign: n.md5("fanyideskweb" + e + i + "p09@Bn{h02_BIEe]$P^nG")
+  5、分开查找这几个字段
+    1、ts ：r = "" + (new Date).getTime()
+       时间戳(13位)：1548320769934
+       r = int(time.time()*1000)
+    2、salt 
+       i = r + parseInt(10 * Math.random(), 10)
+       i = int(time.time()*1000)+random.randint(0,10)
+    3、sign 
+       sign: n.md5("fanyideskweb" + e + i + "p09@Bn{h02_BIEe]$P^nG")
+       ## e:要翻译的单词
+
+       sign = "fanyideskweb" + key + str(salt) + "p09@Bn{h02_BIEe]$P^nG" 
+       s = hashlib.md5()
+       s.update(sign.encode())
+       sign = s.hexdigest()
+
+
+
+
+
+
+
+
+
+
+3、内涵段子脑筋急转弯(mongodb)
+  1、网址 ：www.neihan8.com
+  2、步骤
+    1、找URL规律
+      第1页：https://www.neihan8.com/njjzw/
+      第2页：https://www.neihan8.com/njjzw/index_2.html
+    2、写正则
+      <div class="text-column-item.*?title=.*?>(.*?)</a>.*?<div class="desc">(.*?)</div>
+    3、写代码
+
+
+
+
+
+
+
+
+
+第一次：
+	salt: 15483207699341
+	sign: 267b98fe9abb20763b0d9a4560fb5b0b
+	ts: 1548320769934
+	bv: 363eb5a1de8cfbadd0cd78bd6bd43bee
+第2次：
+	salt: 15483208701106
+	sign: b2c45f55e8b58b58046eba0a89c17a61
+	ts: 1548320870110
+	bv: 363eb5a1de8cfbadd0cd78bd6bd43bee
+第3次：
+	salt: 15483209185268
+	sign: 300bd04be8c337d5dcf6054a3936bb92
+	ts: 1548320918526
+	bv: 363eb5a1de8cfbadd0cd78bd6bd43bee
+
+
+
+
+
+
+
+
+
+
+
+

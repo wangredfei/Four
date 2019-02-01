@@ -1,0 +1,63 @@
+{% extends 'login.html' %}
+
+{% block title %}
+    注册会员
+{% endblock %}
+
+{% block anchor %}
+    <a href="/login">会员登录</a>
+{% endblock %}
+
+{% block form %}
+    <form action="/register" method="post">
+        <!-- 1.手机号 -->
+        <div class="form-line">
+            <p>手机号</p>
+            <input type="text" name="uphone" class="uinput">
+        </div>
+        <!-- 2.密码 -->
+        <div class="form-line">
+            <p>密码</p>
+            <input type="password" name="upwd" class="uinput">
+        </div>
+        <!-- 3.确认密码 -->
+        <div class="form-line">
+            <p>确认密码</p>
+            <input type="password" id="cpwd" class="uinput">
+        </div>
+        <!-- 4.用户名 -->
+        <div class="form-line">
+            <p>用户名</p>
+            <input type="text" name="uname" class="uinput">
+        </div>
+        <!-- 5.邮箱 -->
+        <div class="form-line">
+            <p>邮箱</p>
+            <input type="email" name="uemail" class="uinput">
+        </div>
+        <!-- 6.注册&会员登录 -->
+        <div class="form-line">
+            <p></p>
+            <div>
+                <input type="submit" value="注册" class="loginBtn btn">
+                <a href="/login" class="registBtn btn">会员登录</a>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block style %}
+    <style>
+        .right{
+            margin-top:10px;
+        }
+    </style>
+{% endblock %}
+
+
+
+
+
+
+
+

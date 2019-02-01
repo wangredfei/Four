@@ -1,0 +1,146 @@
+Day03回顾
+1、requests模块
+  1、get()
+    1、查询参数：params->{}
+    2、代理参数：proxies->{}
+       {'协议':'协议://IP:端口号'}
+       {'协议':'协议://user:pwd@IP:端口'}
+    3、Web验证：auth->(元组)
+       auth=('tarenacode','code_2013')
+    4、SSL认证：verify->True/False
+       verify=False : 忽略证书认证
+  2、post()
+    data -> 字典,Form表单数据
+  3、响应对象res的属性
+    1、text : 字符串
+    2、content : 字节流
+    3、encoding: 字符编码
+    4、status_code ：HTTP状态码
+    5、url ：实际数据URL
+*****************************************
+Day04笔记
+1、xpath工具(解析)
+  1、在XML文档中查找信息的语言,同样适用于HTML文档的检索
+  2、xpath辅助工具
+    1、Chrome插件：XPath Helper
+       打开/关闭：Ctrl + Shift + x
+    2、Firefox插件：XPath Checker
+    3、XPath编辑工具：XML Quire
+  3、xpath匹配演示
+    1、查找所有的book节点 ：//book
+    2、查找book下的title子节点中,lang属性为'en'的节点
+       //book/title[@lang="en"]
+    3、查找bookstore下的第2个book节点下的title子节点
+      //bookstore/book[2]/title
+    4、查找所有book/title节点中lang属性的值
+      //book/title/@lang
+  4、选取节点
+    1、// ：从所有子节点和后代节点中查找
+            //price 、 //book//price
+    2、@  ：选取某个节点的属性值
+       选取1类节点 ： //title[@lang="en"]
+       获取节点属性值: //title/@lang
+    3、匹配多路径: |
+       xpath表达式1 | xpath表达式2
+    4、函数
+       1、contains()
+         匹配一个属性值中包含某些字符串的节点
+         找到所有lang属性值包含'e'的title节点
+	   //title[contains(@lang,'e')]
+       2、text() : 获取文本
+           //title[contains(@lang,'e')]/text()
+2、lxml解析库及xpath使用
+  1、lxml库安装 
+    Anaconda Prompt: conda install lxml
+  2、使用流程
+    1、导模块
+      from lxml import etree
+    2、创建解析对象
+      parseHtml = etree.HTML(html)
+    3、调用xpath
+      rList = parseHtml.xpath('xpath表达式')
+    ## 只要调用xpath,结果一定是列表 ##
+3、抓取百度贴吧帖子中所有的图片(视频)
+  1、目标：抓取指定贴吧所有图片
+  2、思路
+    1、获取贴吧主页URL,下一页：找URL规律
+    2、获取1页中所有帖子的URL
+       [帖子1链接,帖子2链接,...]
+    3、对每个帖子URL发请求,获取所有图片的URL
+       [图片1链接,图片2链接,...]
+    4、对每个图片URL发请求,以wb方式写入到本地文件
+  3、思路梳理
+    帖子链接列表 = parseHtml.xpath('....')
+    for 1个帖子链接 in [帖子链接列表]:
+        图片链接列表 = 对帖子发请求后xpath出来的
+        for 1个图片链接 in [图片链接列表]:
+	    html = 对1张图片链接发请求
+	    with open(filename,'wb') as f:
+	        f.write(html)
+  4、步骤
+    1、获取贴吧主页URL,找URL规律
+      http://tieba.baidu.com/f?kw=??&pn=50
+    2、找到页面中所有帖子的URL
+      xpath表达式: //div[@class="t_con cleafix"]/div/div/div/a/@href
+    3、帖子中图片链接xpath表达式
+      //div[@class="d_post_content j_d_post_content  clearfix"]/img[@class="BDE_Image"]/@src
+    4、帖子中视频xpath表达式
+      //div[@class="video_src_wrapper"]/embed/@data-video
+      # 百度对响应内容做了更改,向1个帖子发起请求,获取到响应内容保存到本地,进行页面分析
+4、糗事百科(xpath高级)
+  1、网址：
+  2、xpath匹配
+    1、基准xpath表达式：匹配所有段子节点对象
+      [<div1>,<div2>,.....]
+      //div[contains(@id,"qiushi_tag_")]
+    2、用户昵称： ./div/a/h2
+       段子内容： .//div[@class="content"]/span
+       好笑数量： .//i[@class="number"]
+       评论数量： .//i[@class="number"]
+      
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

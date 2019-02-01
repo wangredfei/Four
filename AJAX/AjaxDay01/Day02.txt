@@ -1,0 +1,93 @@
+1.AJAX
+	1.什么是AJAX
+		Asynchronous Javascript And Xml
+		Asynchronous : 异步的
+		Xml : eXtensible Markup Language
+			可扩展的标签语言
+		JSON:JavaScript Object Notation,用来取代繁琐的xml
+		解释：通过JS异步的向服务器发送请求，并接收响应回来的XML(JSON)格式的数据
+
+		同步请求：
+			当客户端向服务器发送请求时，服务器在处理的过程中，浏览器只能等待，效率低
+		异步请求：
+			当客户端向服务器发送请求时，服务器在处理的过程中，客户端可以做其他的操作，不需要一直等待
+		AJAX优点：
+			1.异步 访问
+			2.局部 刷新
+		使用场合：
+			1.搜索建议
+			2.表单验证
+			3.前后端完全分离
+	2.AJAX核心对象 - 异步对象
+		1.异步对象 - XMLHttpRequest
+			简称为 xhr
+			称为"异步对象",代替浏览器向服务器发送异步的请求并接收响应
+		2.创建异步对象
+			主流的异步对象是 XMLHttpRequest 类型的，并且主流的浏览器(IE7+,Chrome,Firefox,Safari,Opera)全部都支持XMLHttpRequest。但在IE低版本的浏览器中(IE7以及以下)，就不支持XMLHttpRequest。使用 ActiveXObject() 来创建异步对象
+
+			支持XMLHttpRequest：
+				var xhr = new XMLHttpRequest();
+			不支持XMLHttpRequest：
+				var xhr = new ActiveXObject("Microsoft.XMLHTTP");
+
+			练习：根据不同的浏览器支持性创建不同的异步对象
+				1.声明一个方法 - createXhr()
+				2.方法中判断浏览器支持 XMLHttpRequest 还是 ActiveXObject
+				3.根据支持性创建不同的异步对象并返回
+	3.xhr 的成员
+		1.方法 - open()
+			作用：创建请求
+			语法：open(method,url,async)
+				method:请求方法，取值 'get' , 'post'
+				url:请求地址，字符串
+				async:是否采用异步的方式
+					true:异步
+					false:同步
+			ex: xhr.open('get','/server',true);
+		2.属性 - readyState
+			作用：请求状态，通过不同的请求状态值来表示xhr与服务器的交互情况
+				由0-4共5个值组成
+				0:请求尚未初始化
+				1:已经与服务器建立连接
+				2:服务器端开始接收请求
+				3:服务器正在处理请求
+				4:响应已经完成
+		3.属性 - status
+			作用：服务器端的响应状态码
+				200：服务器端正确处理所有请求并给出响应
+				404：请求资源不存在
+				500：服务器内部错误
+		4.属性 - responseText
+			作用：响应数据
+			注意：只有在 readyState为4，并且status为200的时候，responseText才是有用的数据
+		5.事件 - onreadystatechange
+			作用：每当readyState的值发生改变的时候都要触发的操作 - 回调函数
+			为 xhr 绑定 onreadystatechange 事件
+			xhr.onreadystatechange = function(){
+				//判断xhr的readyState是否为4并xhr的status是否为200，如果以上条件达成，则可以接收响应数据
+				if(xhr.readyState==4&&xhr.status==200){
+					console.log(xhr.responseText);
+				}
+			}
+		6.方法 - send(body)
+			作用：通知xhr向服务器发送请求
+			语法：xhr.send(body)
+				body:是请求体
+				get请求的话：body的值为null
+				post请求的话：body的值为要提交的数据
+	4.AJAX的操作步骤
+		1.GET请求
+			1.创建xhr对象
+			2.创建请求 - open()
+			3.设置回调函数 - onreadystatechange
+			4.发送请求 - send()
+
+
+
+
+
+
+
+
+
+

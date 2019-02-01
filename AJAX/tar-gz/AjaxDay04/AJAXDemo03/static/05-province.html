@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/js/jquery-1.11.3.js"></script>
+    <script>
+
+        function loadPro(){
+          $.ajax({
+            async:false,
+            url:'/05-loadpro',
+            type:'get',
+            dataType:'json',
+            success:function(data){
+              //<option value='1'>黑龙江</option>
+              var html = "";
+              $.each(data,function(i,obj){
+                html+="<option value='"+obj.id+"'>";
+                html+=obj.pname;
+                html+="</option>";
+              });
+              $("#selPro").html(html);
+            }
+          });
+        }
+
+        /**
+         * 根据省份的id加载对应的城市
+         * pid : 要加载的省份的id
+         * */
+        function loadCity(pid){
+            $.ajax({
+              url:'/06-loadCity',
+              data:"pid="+pid,
+              type:'get',
+              dataType:'json',
+              success:function(data){
+                //循环遍历data并构建成<option>并增加到#selCity中
+                var html = "";
+                $.each(data,function(i,obj){
+                  html+="<option value='"+obj.id+"'>";
+                  html+=obj.cname;
+                  html+="</option>";
+                });
+                $("#selCity").html(html);
+              }
+            });
+        }
+
+        $(function(){
+            /**加载省份到selPro中*/
+            loadPro();
+            /**
+             * 为#selPro绑定change事件
+             * 并调用loadCity()函数,并将当前selPro选中的值传递过去
+             * */
+            $("#selPro").change(function(){
+              loadCity(this.value);
+            });
+            /** 调用loadCity(),并将#selPro的value值作为参数*/
+            loadCity($("#selPro").val());
+        })
+    </script>
+</head>
+<body>
+    <select id="selPro"></select>
+    <select id="selCity"></select>
+</body>
+</html>

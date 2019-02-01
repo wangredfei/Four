@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .container{
+            position:relative;
+        }
+        #show{
+            position:absolute;
+            width:300px;
+            border:1px solid #000;
+            left:65px;
+            top:30px;
+            background:#fff;
+            display:none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        用户名: <input type="text" id="uname">
+        <div id="show"></div>
+    </div>
+    <script src="/static/js/jquery-1.11.3.js"></script>
+    <script>
+        $(function(){
+          $("#uname").keyup(function(){
+
+            //先清空#show中的所有内容
+            $("#show").empty();
+
+            var uname = this.value;
+            //如果uname的值为空(或空格),则隐藏#show
+            if(uname.trim().length==0){
+              $("#show").css('display','none');
+              return;
+            }
+            //发送get请求到/04-search,并得到相应的结果
+            var params = "uname="+uname;
+            $.get('/04-search',params,function(data){
+              //判断是否查询出结果,查询出来则正常显示,否则隐藏#name
+              if(data.length > 0){
+                //查询出来结果了
+                //显示#show
+                $("#show").css('display','block');
+                //循环遍历data中的每一条数据,获取每条数据的uname的值,并追加到#show中
+                $.each(data,function(i,obj){
+                  var p = $("<p>"+obj.uname+"</p>");
+                  $("#show").append(p);
+                });
+              }else{
+                //没有查询出相关的结果
+                //将#show隐藏
+                $("#show").css('display','none');
+              }
+            },'json');
+          });
+        });
+    </script>
+</body>
+</html>

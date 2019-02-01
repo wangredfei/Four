@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <button onclick="btnClick()">显示航班信息</button>
+    <button onclick="btnClickJQ()">显示航班信息(JQ)</button>
+    <div id="show"></div>
+    <script>
+        /**
+         * 处理跨域请求后响应回来的数据
+         * 参数data:响应的数据
+         * */
+        function flightInfo(data){
+            var html = "";
+
+            html += "<p>航班号:"+data.flightNO+"</p>";
+            html += "<p>始发:"+data.start+"</p>";
+            html += "<p>到达:"+data.to+"</p>";
+
+            html += "<p>时间:"+data.date+"</p>";
+
+            document.getElementById("show").innerHTML = html;
+        }
+
+        function btnClick(){
+          //1.创建script标签
+          var script = document.createElement("script");
+          //2.设置src跨域请求地址,同时将本页面中处理响应的函数名称传递到后端
+          script.src="http://127.0.0.1:5000/03-flight?callback=flightInfo"
+          //3.设置type属性值为text/javascript
+          script.type="text/javascript";
+          //4.将创建好的script标签加载到body中
+          document.body.append(script);
+        }
+    </script>
+    <script src="js/jquery-1.11.3.js"></script>
+    <script>
+        function btnClickJQ(){
+          $.ajax({
+            url:'http://127.0.0.1:5000/03-flight',
+            type:'get',
+            dataType:'jsonp',
+            success:function(data){
+              var html ="";
+              html+="<p>航班号:"+data.flightNO+"</p>";
+              html+="<p>始发:"+data.start+"</p>";
+              $("#show").html(html);
+            }
+          });
+        }
+    </script>
+</body>
+</html>

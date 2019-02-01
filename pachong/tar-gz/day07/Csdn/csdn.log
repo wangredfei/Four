@@ -1,0 +1,15 @@
+2019-01-30 14:22:15 [scrapy.core.scraper] ERROR: Spider error processing <GET https://blog.csdn.net/cpongo4/article/details/86613730> (referer: None)
+Traceback (most recent call last):
+  File "D:\Anaconda3\lib\site-packages\scrapy\utils\defer.py", line 102, in iter_errback
+    yield next(it)
+  File "D:\Anaconda3\lib\site-packages\scrapy\spidermiddlewares\offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "D:\Anaconda3\lib\site-packages\scrapy\spidermiddlewares\referer.py", line 22, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "D:\Anaconda3\lib\site-packages\scrapy\spidermiddlewares\urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "D:\Anaconda3\lib\site-packages\scrapy\spidermiddlewares\depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "D:\王伟超\crawl\day07\Csdn\Csdn\spiders\csdn.py", line 20, in parse
+    yield ite
+NameError: name 'ite' is not defined

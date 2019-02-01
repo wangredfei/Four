@@ -1,0 +1,196 @@
+                                                                                                Day05回顾
+1、Ajax动态加载
+  1、抓包工具抓参数 ：WebForms -> QueryString
+  2、params = {QueryString一堆的查询参数}
+  3、URL地址 ：抓包工具抓到Raw下的GET地址
+2、selenium+phantomjs
+  1、selenium : 自动化测试工具
+  2、phantomjs: 无界面浏览器(内存中页面加载)
+  3、使用流程
+    1、from selenium import webdriver
+    2、driver=webdriver.PhantomJS(executable_path=)
+    3、driver.get(url)
+    4、driver.find_element_by_id('').send_keys('')
+    5、driver.find_element_by_id('').click()
+    6、driver.quit()
+  4、常用方法
+    1、driver.get(url)
+    2、driver.page_source
+    3、driver.page_source.find('')
+       -1  失败
+    4、driver.find_element_by_name('').text
+    5、driver.find_element_by_class_name('').text
+    6、driver.find_element_by_xpaht('')
+    7、节点对象.text
+3、selenium+chromedriver
+  1、下载对应版本chromedriver
+  2、将chromedriver.exe放到python安装目录的Scripts
+  3、设置无界面模式
+     1、opt = webdriver.ChromeOptions()
+     2、opt.set_headless()
+     3、driver = webdriver.Chrome(options=opt)
+  4、driver执行JS
+    driver.execute_script('window.scrollTo(0,document.body.scrollHeight)')
+4、多线程爬虫
+  1、多进程 ：大量密集的计算
+  2、多线程 ：I/O密集(爬虫网络I/O频繁)
+*******************************************
+Day06笔记
+1、多线程爬虫
+  1、原理 ：图
+  2、知识点
+    1、队列(from multiprocessing import Queue)
+       1、put()
+       2、get()
+         1、get(block=True,timeout=2)
+	    ## 阻塞2秒钟,没有得到值抛出超时异常
+	 2、get(block=False)
+	    ## 不阻塞,获取不到值马上抛异常
+    2、线程模块(from threading import Thread)
+       t = Thread(target=函数名)
+       t.start()
+       t.join()
+2、小米应用商店抓取(多线程)
+  1、网址 ：百度搜 小米应用商店
+  2、目标 ：应用分类(聊天社交)
+     1、应用名称
+     2、应用链接
+  3、抓取查询参数,F12->QueryString
+    URL ：http://app.mi.com/categotyAllListApi?
+    params = {
+        page: ??
+        categoryId: 2
+        pageSize: 30
+    }
+3、BeautifulSoup解析模块
+  1、定义 ：HMTL或XML解析器,依赖于lxml
+  2、安装
+    Anaconda Prompt: conda install beautifulsoup4
+  3、使用流程
+    1、导入模块
+      from bs4 import BeautifulSoup
+    2、创建解析对象
+      soup = BeautifulSoup(html,'lxml')
+    3、对象调用方法查找节点
+      rList = soup.find_all(条件)
+  4、BeautifulSoup支持的解析库
+    1、lxml ：速度快,文档容错能力强
+    2、html.parser ：Python标准库,速度一般,容错一般
+    3、xml ：速度快,文档容错能力强
+  5、常用方法
+    1、find_all() ：返回列表
+       rList = soup.find_all('div',{'id':'test'})
+    2、节点对象.get_text()
+    3、节点对象.string
+4、链家二手房数据抓取(BeautifulSoup)
+  1、网址 ：https://bj.lianjia.com/ershoufang/
+  2、目标
+     1、名称
+     2、户型
+     3、面积
+     4、年份
+     5、楼层
+     6、地点
+     7、单价
+     8、总价
+5、scrapy框架
+  1、定义 ：异步处理框架,可配置和可扩展程度非常高,Python中使用最广泛的爬虫框架
+  2、安装
+    1、Windows安装
+      Anaconda Prompt ：conda install Scrapy
+    2、Ubuntu安装
+      1、安装依赖库
+        sudo apt-get install libssl-dev
+	sudo apt-get install libffi-dev
+	sudo apt-get install build-essential
+	sudo apt-get install python3-dev
+	sudo apt-get install liblxml2
+	sudo apt-get install liblxml2-dev
+	sudo apt-get install libxslt1-dev
+	sudo apt-get install zlib1g-dev
+      2、升级pyasn1模块
+        sudo pip3 install pysan1==0.4.4
+      3、sudo pip3 install Scrapy
+6、Scrapy框架组成
+  1、引擎(Engine) : 整个框架核心
+  2、调度器(Scheduler) : 接受从引擎发来URL入队列
+  3、下载器(Downloader)
+     下载网页源码,返回给爬虫程序
+  4、项目管道(Item Pipeline) 
+     数据处理
+  5、爬虫程序(spider)
+  6、下载器中间件(Downloader Middlewares)
+     引擎 ---->  下载器
+  7、蜘蛛中间件(Spider Middlewares)
+     引擎 ---->  爬虫程序
+  8、item ：定义爬取的数据结构
+7、制作爬虫项目步骤
+  1、新建项目
+     scrapy startproject 项目名
+  2、明确目标(items.py)
+  3、制作爬虫程序
+     scrapy genspider 文件名 域名
+  4、数据处理(pipelines.py)
+  5、全局配置(settings.py)
+  6、运行爬虫
+     scrapy crawl 爬虫名
+8、scrapy项目文件详解
+  1、目录结构
+    Baidu
+    ├── Baidu               # 项目目录
+    │   ├── items.py        # 定义数据结构
+    │   ├── middlewares.py  # 中间件实现
+    │   ├── pipelines.py    # 数据处理
+    │   ├── settings.py     # 全局配置
+    │   └── spiders 
+    │       └── baidu.py    # 爬虫文件
+    └── scrapy.cfg
+  2、setting.py配置
+    *1、是否遵守robots协议
+      ROBOTSTXT_OBEY = False
+    2、设置并发数量
+      CONCURRENT_REQUESTS = 32
+    3、下载延迟时间
+      DOWNLOAD_DELAY = 1
+    *4、请求头(添加User-Agent)
+      DEFAULT_REQUEST_HEADERS = {}
+    *5、项目管道
+      ITEM_PIPELINES = {
+       'Baidu.pipelines.BaiduPipeline': 300,}
+9、抓取百度首页源码,保存到 百度.html 中
+  1、scrapy startproject Baidu1
+  2、cd Baidu1
+  3、scrapy genspider baidu1 www.baidu.com
+  4、修改items.py(此项目不用改)
+  5、修改爬虫文件baidu1.py
+     def parse(self,response):
+         print('*'*50)
+	 with open('百度.html','w',encoding='utf-8') as f:
+	     f.write(response.text)
+	 print('*'*50)
+  6、修改管道文件pipelines.py(此项目不用更改)
+  7、修改settings.py
+     1、是否遵守robots协议->False
+     2、DEFAULT_REQUEST_HEADERS = {添加User-Agent}
+  8、运行爬虫文件
+     scrapy crawl baidu1
+10、pycharm运行爬虫项目
+  1、创建begin.py(和scrapy.cfg文件同目录)
+  2、begin.py内容：
+    from scrapy import cmdline
+    cmdline.execute('scrapy crawl baidu1'.split())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

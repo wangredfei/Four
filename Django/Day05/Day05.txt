@@ -1,0 +1,151 @@
+1.Django ORM
+	1.自定义查询对象 - objects
+		1.声明类EntryManager继承自models.Manager
+			Entry.objects的类型为 models.Manager
+			允许在EntryManager中添加自定义函数
+			示例：
+				class EntryManager(models.Manager):
+					def 函数名(self,自定义参数列表):
+						.... ....
+						return .... ....
+		2.使用EntryManager覆盖Models类中原有的objects
+			class Entry(models.Model):
+				objects = EntryManager()
+				name = models.CharField(xxxx)
+		练习：通过自定义的objects类型完成
+			1.查询Author中姓名中包含指定字符的所有信息
+			2.查询Book中出版时间是指定年份的所有信息
+2.HttpRequest - 请求对象
+	1.什么是HttpRequest
+		HttpRequest，在Django中就是请求对象。
+		在Django中，请求对象被封装到视图处理函数中的参数里-request
+	2.request中的重要内容
+		1.request.scheme : 请求协议
+		2.request.body   : 请求主体
+		3.request.path   : 请求具体资源路径
+		4.request.get_full_path : 请求完整路径
+		5.request.get_host() : 请求的主机/域名
+		6.request.method : 请求方式
+		7.request.GET    : get请求方式中封装的数据
+		8.request.POST   : post请求方式中封装的数据
+		9.request.COOKIES : 请求中cookie的相关数据
+		10.request.META : 请求的元数据(消息头)
+			request.META.HTTP_REFERER : 请求源地址
+	3.获取请求提交的数据
+		1.使用get方式
+			1.语法
+				request.GET['参数名']
+				request.GET.get('参数名')
+				request.GET.getlist('参数名')
+			2.能够产生get请求方式的场合
+				1.地址栏的请求
+					1.<a href="地址?参数=值&参数=值">
+					2.location.href='地址?参数=值&参数=值'
+				2.表单中method为get
+					<form method='get'>
+						姓名: <input type="text" name='uname'>
+					</form>
+				注意：Django中URL的参数是不能用此方式
+					url(r'^01-xxx/(\d+)',...)
+					此写法属于Django,只在Django中有效而并非HTTP协议标准
+		2.使用post方式
+			1.语法
+				request.POST['参数名']
+				request.POST.get('参数名')
+				request.POST.getlist('参数名')
+			2.CSRF
+				Cross-Site Request Forgery
+				跨    站点 请求    伪装
+				(跨站点请求攻击)
+
+				解决方案：
+					1.取消 csrf 验证(不推荐)
+						删除 settings.py 中 MIDDLEWARE 中的 CsrfViewMiddleware 中间件
+					2.开放验证
+						在视图处理函数上增加 : @csrf_protect
+						
+						@csrf_protect
+						def post_views(request):
+							pass
+					3.通过验证
+						需要在表单中增加一个标签
+						{% csrf_token %}
+
+			练习-果园项目的注册部分
+				1.创建数据库 - fruitday
+				2.创建实体类 - Users
+					1.uphone - varchar(11)
+					2.upwd - varchar(200)
+					3.uemail - varchar(245)
+					4.uname - varchar(20)
+					5.isActive - tinyint,默认值为 1(True)
+				3.完善注册 - /register/
+					1.如果是get请求，则去往 regsiter.html
+					2.如果是post请求，则处理请求数据
+						验证uphone是否存在，如果存在回到前端并给出提示
+3.使用forms模块处理表单		
+	1.forms模块的作用
+		通过forms模块，允许将表单与class相结合
+		允许通过class 生成 表单
+	2.使用forms模块
+		1.在应用中创建 forms.py 文件
+		2.导入 django 提供的 forms 模块
+			from django import forms
+		3.创建 class , 一个class会生成一个表单
+			class ClassName(forms.Form)
+		4.在 class 中创建属性
+			一个属性对应到表单中称为一个控件
+	3. forms.Form 的语法
+		属性=forms.类型(参数)	
+		1.类型
+			forms.CharField()
+			forms.DateField()
+			.... ....
+			每个类型都会生成一个表单控件
+		2.参数
+			1.label
+				控件前的文本
+			2.initial
+				控件的初始值
+			3.widget
+				指定小部件
+			4.error_messages
+				指定数据错误时的提示文本
+			.... ....
+	4. 在模板中解析form对象
+		1.注意
+			1.需要自定义<form>
+			2.表单中的按钮需要自定义
+		2.解析form对象
+			在视图中创建form对象并发送到模板中解析
+			ex:
+				form = RemarkForm()
+				return render(request,'xx.html',locals())
+			1.手动解析
+				{% for field in form %}
+					{{field.label}}:控件中label的值
+					{{field}}:表示的就是控件
+				{% endfor %}
+			2.自动解析
+				1.{{form.as_p}}
+					将form中的每个属性都使用p标记进行表示
+				2.{{form.as_ul}}
+					将form中的每个属性使用li标记包裹再显示
+					注意：必须手动提供<ol></ol>或<ul></ul>
+				3.{{form.as_table}}
+					将form中的每个属性使用tr标记包裹
+					注意：必须手动提供<table></table>
+
+
+
+
+
+
+
+
+
+['COOKIES', 'FILES', 'GET', 'META', 'POST', '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__iter__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_encoding', '_get_post', '_get_raw_host', '_get_scheme', '_initialize_handlers', '_load_post_and_files', '_mark_post_parse_error', '_messages', '_post_parse_error', '_read_started', '_set_post', '_stream', '_upload_handlers', 'body', 'build_absolute_uri', 'close', 'content_params', 'content_type', 'csrf_processing_done', 'encoding', 'environ', 'get_full_path', 'get_host', 'get_port', 'get_raw_uri', 'get_signed_cookie', 'is_ajax', 'is_secure', 'method', 'parse_file_upload', 'path', 'path_info', 'read', 'readline', 'readlines', 'resolver_match', 'scheme', 'session', 'upload_handlers', 'user', 'xreadlines']
+
+{'HTTP_COOKIE': 'csrftoken=IONlb2l3kJP2lzJ8UBIRFgsrcevmUOFpPYhtOBkMXvpRcZ4U4ORqywD7bWP2TFpj; sessionid=uu12ght0x525jekqu645lfbn2l7szyfw', 'PATH_INFO': '/01-request/', 'PWD': '/home/tarena/PycharmProjects/DjangoDemo05', 'QT_ACCESSIBILITY': '1', 'XDG_CURRENT_DESKTOP': 'Unity', 'GTK_MODULES': 'gail:atk-bridge:unity-gtk-module', 'wsgi.errors': <_io.TextIOWrapper name='<stderr>' mode='w' encoding='UTF-8'>, 'PYCHARM_HOSTED': '1', 'QT_QPA_PLATFORMTHEME': 'appmenu-qt5', 'JOB': 'unity-settings-daemon', 'HTTP_ACCEPT_ENCODING': 'gzip, deflate', 'LOGNAME': 'tarena', 'QUERY_STRING': '', 'GDMSESSION': 'ubuntu', 'SCRIPT_NAME': '', 'wsgi.version': (1, 0), 'HTTP_ACCEPT': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'wsgi.multiprocess': False, 'XDG_RUNTIME_DIR': '/run/user/1000', 'GTK_IM_MODULE': 'fcitx', 'REQUEST_METHOD': 'GET', 'USER': 'tarena', 'SERVER_NAME': 'localhost', 'PYTHONIOENCODING': 'UTF-8', 'XDG_SEAT_PATH': '/org/freedesktop/DisplayManager/Seat0', 'IM_CONFIG_PHASE': '1', 'XDG_SEAT': 'seat0', 'HOME': '/home/tarena', 'LD_LIBRARY_PATH': '/home/tarena/pycharm-2017.1.5/bin:', 'wsgi.multithread': True, 'SHLVL': '0', 'GIO_LAUNCHED_DESKTOP_FILE': '/home/tarena/.local/share/applications/jetbrains-pycharm.desktop', 'CLUTTER_IM_MODULE': 'xim', 'XAUTHORITY': '/home/tarena/.Xauthority', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/usr/share/upstart/xdg:/etc/xdg', 'GNOME_KEYRING_CONTROL': '', 'CSRF_COOKIE': 'IONlb2l3kJP2lzJ8UBIRFgsrcevmUOFpPYhtOBkMXvpRcZ4U4ORqywD7bWP2TFpj', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'XDG_SESSION_PATH': '/org/freedesktop/DisplayManager/Session0', 'DISPLAY': ':0', 'SESSION': 'ubuntu', 'GATEWAY_INTERFACE': 'CGI/1.1', 'RUN_MAIN': 'true', 'XDG_SESSION_TYPE': 'x11', 'TZ': 'UTC', 'QT4_IM_MODULE': 'fcitx', 'SESSIONTYPE': 'gnome-session', 'UPSTART_INSTANCE': '', 'XFILESEARCHPATH': '/usr/dt/app-defaults/%L/Dt', 'SHELL': '/bin/bash', 'GNOME_KEYRING_PID': '', 'GDM_LANG': 'zh_CN', 'REMOTE_ADDR': '127.0.0.1', 'GTK2_MODULES': 'overlay-scrollbar', 'NLSPATH': '/usr/dt/lib/nls/msg/%L/%N.cat', 'DESKTOP_SESSION': 'ubuntu', 'XDG_VTNR': '7', 'GIO_LAUNCHED_DESKTOP_FILE_PID': '3871', 'SERVER_SOFTWARE': 'WSGIServer/0.2', 'SERVER_PROTOCOL': 'HTTP/1.1', 'XDG_SESSION_DESKTOP': 'ubuntu', 'COMPIZ_CONFIG_PROFILE': 'ubuntu', 'PYTHONPATH': '/home/tarena/PycharmProjects/DjangoDemo05', 'COMPIZ_BIN_PATH': '/usr/bin/', 'HTTP_ACCEPT_LANGUAGE': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2', 'CONTENT_TYPE': 'text/plain', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'GPG_AGENT_INFO': '/home/tarena/.gnupg/S.gpg-agent:0:1', 'UPSTART_SESSION': 'unix:abstract=/com/ubuntu/upstart-session/1000/1802', 'XDG_SESSION_ID': 'c2', 'MANDATORY_PATH': '/usr/share/gconf/ubuntu.mandatory.path', 'QT_LINUX_ACCESSIBILITY_ALWAYS_ON': '1', 'wsgi.run_once': False, 'PYTHONUNBUFFERED': '1', 'XMODIFIERS': '@im=fcitx', 'LANG': 'zh_CN.UTF-8', 'REMOTE_HOST': '', 'DEFAULTS_PATH': '/usr/share/gconf/ubuntu.default.path', 'UPSTART_JOB': 'unity7', 'wsgi.input': <_io.BufferedReader name=5>, 'wsgi.file_wrapper': <class 'wsgiref.util.FileWrapper'>, 'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'HTTP_USER_AGENT': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0', 'DJANGO_SETTINGS_MODULE': 'DjangoDemo05.settings', 'INSTANCE': '', 'wsgi.url_scheme': 'http', 'SERVER_PORT': '8000', 'UPSTART_EVENTS': 'xsession started', 'HTTP_HOST': 'localhost:8000', 'LANGUAGE': 'zh_CN:zh', 'HTTP_UPGRADE_INSECURE_REQUESTS': '1', 'QT_IM_MODULE': 'fcitx', 'DBUS_SESSION_BUS_ADDRESS': 'unix:abstract=/tmp/dbus-DtuWHOIsWj', 'HTTP_CONNECTION': 'keep-alive', 'XDG_GREETER_DATA_DIR': '/var/lib/lightdm-data/tarena', 'CONTENT_LENGTH': ''}
+
+{'wsgi.errors': <_io.TextIOWrapper name='<stderr>' mode='w' encoding='UTF-8'>, 'XMODIFIERS': '@im=fcitx', 'GDM_LANG': 'zh_CN', 'XDG_VTNR': '7', 'CONTENT_LENGTH': '', 'REMOTE_ADDR': '127.0.0.1', 'wsgi.url_scheme': 'http', 'MANDATORY_PATH': '/usr/share/gconf/ubuntu.mandatory.path', 'wsgi.multiprocess': False, 'DESKTOP_SESSION': 'ubuntu', 'UPSTART_INSTANCE': '', 'XDG_RUNTIME_DIR': '/run/user/1000', 'wsgi.run_once': False, 'XDG_SESSION_PATH': '/org/freedesktop/DisplayManager/Session0', 'SESSIONTYPE': 'gnome-session', 'UPSTART_JOB': 'unity7', 'REQUEST_METHOD': 'GET', 'HTTP_UPGRADE_INSECURE_REQUESTS': '1', 'HTTP_ACCEPT_LANGUAGE': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2', 'SERVER_PORT': '8000', 'DEFAULTS_PATH': '/usr/share/gconf/ubuntu.default.path', 'GIO_LAUNCHED_DESKTOP_FILE': '/home/tarena/.local/share/applications/jetbrains-pycharm.desktop', 'RUN_MAIN': 'true', 'SERVER_PROTOCOL': 'HTTP/1.1', 'QT4_IM_MODULE': 'fcitx', 'CSRF_COOKIE': 'IONlb2l3kJP2lzJ8UBIRFgsrcevmUOFpPYhtOBkMXvpRcZ4U4ORqywD7bWP2TFpj', 'USER': 'tarena', 'SESSION': 'ubuntu', 'HTTP_USER_AGENT': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0', 'GTK_IM_MODULE': 'fcitx', 'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'wsgi.input': <_io.BufferedReader name=5>, 'DISPLAY': ':0', 'DJANGO_SETTINGS_MODULE': 'DjangoDemo05.settings', 'HTTP_CONNECTION': 'keep-alive', 'NLSPATH': '/usr/dt/lib/nls/msg/%L/%N.cat', 'XDG_SESSION_DESKTOP': 'ubuntu', 'SERVER_SOFTWARE': 'WSGIServer/0.2', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'REMOTE_HOST': '', 'XDG_GREETER_DATA_DIR': '/var/lib/lightdm-data/tarena', 'GTK2_MODULES': 'overlay-scrollbar', 'XDG_SEAT_PATH': '/org/freedesktop/DisplayManager/Seat0', 'UPSTART_SESSION': 'unix:abstract=/com/ubuntu/upstart-session/1000/1802', 'wsgi.version': (1, 0), 'PWD': '/home/tarena/PycharmProjects/DjangoDemo05', 'SCRIPT_NAME': '', 'QUERY_STRING': '', 'IM_CONFIG_PHASE': '1', 'COMPIZ_BIN_PATH': '/usr/bin/', 'HTTP_HOST': 'localhost:8000', 'QT_LINUX_ACCESSIBILITY_ALWAYS_ON': '1', 'LANGUAGE': 'zh_CN:zh', 'PATH_INFO': '/01-request/', 'XDG_SEAT': 'seat0', 'XDG_SESSION_TYPE': 'x11', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONUNBUFFERED': '1', 'UPSTART_EVENTS': 'xsession started', 'QT_QPA_PLATFORMTHEME': 'appmenu-qt5', 'GDMSESSION': 'ubuntu', 'GATEWAY_INTERFACE': 'CGI/1.1', 'TZ': 'UTC', 'LANG': 'zh_CN.UTF-8', 'wsgi.file_wrapper': <class 'wsgiref.util.FileWrapper'>, 'INSTANCE': '', 'GPG_AGENT_INFO': '/home/tarena/.gnupg/S.gpg-agent:0:1', 'HTTP_ACCEPT_ENCODING': 'gzip, deflate', 'SHELL': '/bin/bash', 'XDG_SESSION_ID': 'c2', 'DBUS_SESSION_BUS_ADDRESS': 'unix:abstract=/tmp/dbus-DtuWHOIsWj', 'GIO_LAUNCHED_DESKTOP_FILE_PID': '3871', 'LOGNAME': 'tarena', 'PYTHONPATH': '/home/tarena/PycharmProjects/DjangoDemo05', 'SERVER_NAME': 'localhost', 'XAUTHORITY': '/home/tarena/.Xauthority', 'GNOME_KEYRING_CONTROL': '', 'GNOME_KEYRING_PID': '', 'QT_IM_MODULE': 'fcitx', 'PYTHONIOENCODING': 'UTF-8', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/usr/share/upstart/xdg:/etc/xdg', 'XFILESEARCHPATH': '/usr/dt/app-defaults/%L/Dt', 'PYCHARM_HOSTED': '1', 'SHLVL': '0', 'HTTP_REFERER': 'http://localhost:8000/00-test/', 'XDG_CURRENT_DESKTOP': 'Unity', 'HTTP_ACCEPT': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'JOB': 'unity-settings-daemon', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'CLUTTER_IM_MODULE': 'xim', 'GTK_MODULES': 'gail:atk-bridge:unity-gtk-module', 'CONTENT_TYPE': 'text/plain', 'HTTP_COOKIE': 'csrftoken=IONlb2l3kJP2lzJ8UBIRFgsrcevmUOFpPYhtOBkMXvpRcZ4U4ORqywD7bWP2TFpj; sessionid=uu12ght0x525jekqu645lfbn2l7szyfw', 'LD_LIBRARY_PATH': '/home/tarena/pycharm-2017.1.5/bin:', 'COMPIZ_CONFIG_PROFILE': 'ubuntu', 'HOME': '/home/tarena', 'QT_ACCESSIBILITY': '1', 'wsgi.multithread': True}

@@ -1,0 +1,181 @@
+1.路由系统
+	1.路由改版
+		访问路径 ：localhost:8000/music/index
+		改版路径 ：localhost:8000/music/
+			访问 index() 视图处理函数
+
+		访问路径 ：localhost:8000/index/index
+		改版路径 ：localhost:8000/
+			访问 index 应用中的 index()视图函数
+		
+		访问路径 ：localhost:8000/login
+			访问 index 应用中的 login()视图函数
+		
+		访问路径 ：localhost:8000/register
+			访问 index 应用中的 register()视图函数
+2.Django中的模板 - Templates
+	1.Django中的模板
+		Django中的模板引擎是由Django自己提供，并不是Jinja2，索引Django中的模板语法与Flask中的模板语法会稍有不同
+	2.模板的配置
+		在 setting.py 中有一个 TEMPLATES 变量
+		1.BACKEND:指定模板的引擎
+		2.DIRS:指定存放模板的目录们
+			1.如果写东西：则按照写好的路径去查找模板
+			2.保存为空：Django会自动的到每个应用中的templates目录中去查找模板文件
+
+			推荐：'DIRS': [os.path.join(BASE_DIR, 'templates')]
+		3.APP_DIRS
+			是否要搜索应用中的指定名称的目录们
+	3.模板的加载方式
+		1.通过loader获取模板，通过HttpResponse响应
+			from django.template import loader
+
+			#1.通过 loader 加载模板
+			t = loader.get_template("模板名称")
+			#2.将模板转换成字符串
+			html = t.render()
+			#3.再通过HttpResponse进行响应
+			return HttpResponse(html)
+		2.使用 render() 直接加载并响应模板
+			from django.shortcuts import render
+
+			return render(request,'模板的名称')
+	4.模板的语法
+		1.变量
+			1.作用
+				传递后端的数据到模板上进行显示
+			2.允许做为变量的数据类型
+				字符串，数字，列表，元组，字典，函数，对象
+			3.变量的语法
+				变量必须封装到字典中才允许传递到模板上
+				dic = {
+					"变量1":"值1",
+					"变量2":"值2",
+					... ...
+				}
+				1.使用 loader 加载模板
+					t=loader.get_template('xxx.html')
+					html=t.render(dic)
+					return HttpResponse(html)
+				2.使用 render 渲染模板
+					return render(request,'xxx.html',dic)
+			4.在模板中使用变量
+				{{变量名}}
+		2.标签
+			1.作用
+				将服务器端一些功能嵌入到模板中
+			2.语法
+				{% 标签内容 %}
+				{% 结束标签 %}
+				1.for 标签
+					1.语法：
+						{% for 变量 in 可迭代变量 %}
+						{% endfor %}
+					2.内置变量 - forloop
+						1. forloop.counter
+							得到当前循环遍历的次数
+						2. forloop.counter0
+							得到当前循环遍历的下标
+						3. forloop.first
+							是否为第一次循环
+						4. forloop.last
+							是否为最后一次循环
+				2.if 标签
+					1.作用
+						在模板中完成判断的操作
+					2.语法
+						1. if 
+							{% if 条件 %}
+								满足条件时执行的内容
+							{% endif %}
+						2. if ... else
+							{% if 条件 %}
+								满足条件执行的内容
+							{% else %}
+								不满足条件时执行的内容
+							{% endif %}
+						3. if ... elif ... else
+							{% if 条件1 %}
+							{% elif 条件2 %}
+							{% elif 条件3 %}
+							{% else %}
+							{% endif %}
+		3.过滤器
+			1.作用
+				在变量输出前对变量的值进行筛选或过滤
+			2.语法
+				{{变量|过滤器:参数值}}
+			3.常用过滤器
+		4.静态文件
+			1.静态文件的配置
+				在 settings.py 中设置以下两点：
+				1.静态文件访问路径
+					通过哪个地址访问静态的资源们
+					STATIC_URL = '/static/'
+					static 就是访问静态资源的路径
+				2.静态文件存储路径
+					指定静态文件要存放在服务器的哪个目录
+					STATICFILES_DIRS=(os.path.join(BASE_DIR,'static'),)
+			2.访问静态文件
+				1.使用 静态文件访问路径 进行访问
+					http://localhost:8000/static/xxxx
+					ex:
+						<img src="/static/http://localhost:8000/static/images/b04.jpg">
+
+						<img src="/static//static/images/b04.jpg">
+				2.使用{% static %}进行访问
+					{% static %} 表示的就是静态资源访问路径
+
+					1.加载 static
+						{% load static %}
+					2.使用静态资源时
+						<img src="/static/{% static 'images/a.jpg' %}">
+					
+				练习：
+					1.创建Django项目 - FruitDay
+					2.创建应用 - index 
+					3.配置路由
+						http://localhost:8000/xxxx 
+						一律交给index的路由做进一步的处理
+					4.将html阶段中
+						将 果园的首页，登录页 以模板的方式设置到 FruitDay项目中以及配置好所有的静态文件
+					5.
+						首页：http://localhost:8000
+						登录：http://localhost:8000/login/
+		5.模板的继承
+			1.语法
+				1.在父模板中
+					要标识出哪些内容在子模板是允许被修改的
+					{% block 块名 %}
+					{% endblock %}
+
+					block作用：
+						1.在父模板中，正常显示
+						2.在子模板
+							不重写，采用父模板中的效果
+							重写，则按照重写的效果显示
+				2.在子模板中
+					1.指定继承自哪个模板
+						{% extends '父模板名称' %}
+					2.重写父模板中的内容
+						{% block 块名 %}
+						{% endblock %}
+		6.url()的name参数
+			1.url的语法
+				url(regex,views,kwargs,name='别名')
+				name:为了给当前的url起别名，反向解析时使用
+
+				url(r'^user_login/$',views.login,name='log')
+			2.反向解析
+				1.在模板上做反向解析
+					{% url '别名' %}
+					{% url '别名' '参数1' '参数2' %}
+				2.使用场合
+					1.访问路径过长时，推荐使用别名访问
+					2.访问地址经常变换时，推荐使用别名
+
+
+
+
+
+

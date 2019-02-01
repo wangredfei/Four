@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        function createXhr(){
+          var xhr = null;
+          //判断浏览器对xhr的支持性
+          if(window.XMLHttpRequest){
+            xhr = new XMLHttpRequest();
+          }else{
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+          }
+          return xhr;
+        }
+
+        function testXhr(){
+          var xhr = createXhr();
+          console.log(xhr);
+        }
+    </script>
+</head>
+<body>
+    <button onclick="testXhr()">创建异步对象</button>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+        {% csrf_token %}
+        用户名称:<input type="text" id="uname">
+        <button onclick="btnPost()">发送post请求</button>
+        <p id="show"></p>
+        <div>
+            <button onclick="btnJson()">
+                接收JSON数据
+            </button>
+        </div>
+    <script src="/static//static/js/jquery-1.11.3.js"></script>
+    <script>
+        function btnPost(){
+          var params = {
+            'uname':$("#uname").val(),
+            'csrfmiddlewaretoken':$("[name='csrfmiddlewaretoken']").val()
+          }
+          $.post('/13-ajax-post/',params,function(data){
+            $("#show").html(data);
+          });
+        }
+
+        function btnJson(){
+          $.get(
+            '/14-ajax-json/',
+            function(data){
+                $.each(data,function(i,obj){
+                  console.log("ID:"+obj.pk);
+                  console.log("姓名:"+obj.fields.uname);
+                  console.log("密码:"+obj.fields.upwd);
+                  console.log("年龄:"+obj.fields.uage);
+                  console.log("邮箱:"+obj.fields.uemail);
+                });
+            },'json'
+          );
+        }
+    </script>
+</body>
+</html>

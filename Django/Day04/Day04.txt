@@ -1,0 +1,272 @@
+1.ORM 数据操作
+	1.查询
+		1.聚合查询(不带分组)
+			语法:aggregate()
+			用法:Entry.objects.aggregate(名=聚合函数('列'))
+				聚合函数()
+					from django.db.models import Avg,Sum,Count,Max,Min
+		2.聚合查询(带分组)
+			语法:annotate()
+			用法:
+				Entry.objects
+					.values('分组列名')
+					.annnotate(名=聚合函数('列'))
+					.values('查询列名')
+			练习：
+				1.查询 Book 表中共有本图书
+					result = Book.objects.aggregate(count=Count('*'))
+				2.查询 每个时间 所发布的书籍的数量
+					Book.objects.values('publicate_date')
+						.annotate(count=Count('*'))
+				3.查询 2015 年之后所出版的图书数量
+					Book.objects.filter(publicate_date__year__gte=2015).aggregate(count=Count('*'))
+				4.查询 Publisher中，City为北京的出版社数量
+					Publisher.objects.filter(city='北京').aggregate(count=Count('*'))
+	2.修改
+		1.修改单个实体
+			1.查
+				通过 get() 得到要修改的实体对象
+			2.改
+				通过得到的对象去修改属性值
+				对象.属性=值
+			3.保存
+				通过对象.save()保存数据回数据库
+		2.批量修改
+			直接调用QuerySet的update(属性=值)实现批量修改
+	3.删除
+		调用实体对象/查询结果集的 delete() 实现删除
+		1.删除单个对象
+			Author.objects.get(id=1).delete()
+		2.批量删除
+			Author.objects.filter(isActive=False).delete()
+	4.F查询 和 Q查询
+		1.F查询 - F()
+			1.作用：
+				在执行操作过程中用于获取某列的值
+			2.语法：
+				from django.db.models import F
+				F('列名')
+			3.示例
+				更新Author表中所有的数据的age都加10岁
+				Author.objects.all().update(age=F('age')+10)
+		2.Q查询 - Q()
+			1.作用：
+				在查询条件中来实现 or 的操作的
+			2.语法：
+				from django.db.models import Q
+				Q(条件1)|Q(条件2)
+			3.示例：
+				查询Author表中id=1或age>=90的人的信息
+				Author.objects.filter(Q(id=1)|Q(age__gte=90))
+	5.原生的数据库操作方法
+		1.查询
+			1.语法：
+				raw(sql语句)
+			2.用法
+				Entry.objects.raw('sql')
+			3.返回值
+				QuerySet
+		2.增删改
+			from django.db import connection
+			def doSQL(request):
+				#更新index_author表所有数据的isActive=1
+				with connection.cursor() as cursor:
+					cursor.execute("update index_author set isActive=1")
+				return ''
+2.使用后台管理models
+	1.后台的配置
+		登录地址：http://localhost:8000/admin
+
+		使用指令创建后台管理员
+		./manage.py createsuperuser
+	2.基本的数据管理
+		1.在应用中的 admin.py 中注册要管理的数据
+			1.admin.py
+				作用：
+					注册要管理的Models类
+			2.注册Models
+				from django.contrib import admin
+				from .models import *
+
+				admin.site.register(Entry)
+				admin.site.register(Entry)
+		2.定义Models的展现形式
+			1.通过 __str__ 定义展现形式
+				class Author(models.Model):
+					xxxx xxxx
+
+					def __str__(self):
+						return self.name
+			2.通过 verbose_name 字段选项，修改名称
+				name=models.CharField(
+					max_length=30,
+					verbose_name='姓名'
+				)
+			3.通过Meta内部类 修改展现形式
+				class Author(models.Model)
+					class Meta:
+						1.db_table
+							指定当前类映射到的表名
+							(设置完成后立马同步数据库)
+						2.verbose_name
+							定义实体类在admin中的显示名称
+							(单数)
+						3.verbose_name_plural
+							效果同上(复数)
+						4.ordering
+							指定数据的排序方式
+							取值为一个列表
+
+			练习：
+				1.修改 Publisher 后台管理功能
+					1.更改表名为 publisher
+					2.修改后台的展示名称 - 出版社
+					3.修改每个属性对应的中文名称
+				2.修改 Book 后台管理功能
+					1.更改表名为 book
+					2.修改后台的展示名称 - 书籍
+					3.修改每个属性对应的中文名称
+					4.指定排序方式 - 按出版时间倒序排序
+	3.高级管理
+		1.在 admin.py 中创建高级管理类并注册
+			1.定义类EntryAdmin,继承自admin.ModelAdmin
+				class AuthorAdmin(admin.ModelAdmin):
+					pass
+			2.注册高级管理类
+				admin.site.register(Entry,EntryAdmin)
+		2.在EntryAdmin中所管理的功能
+			通过 属性 管理功能
+			1.list_display
+				作用：定义在列表页上允许显示的字段们
+				取值：由属性名组成的列表或元组
+			2.list_display_links
+				作用：定义在列表页中能连接到详情页的字段们
+				取值：同上
+				注意：取值必须要出现在list_display中
+			3.list_editable
+				作用：定义在列表页中就允许修改的字段们
+				取值：同上
+				注意：取值必须出现在list_display中但不能出现在list_display_links中
+			4.search_fields
+				作用：添加允许被搜索的字段们
+				取值：同上
+			5.list_filter
+				作用：列表页右侧增加一个过滤器快速筛选
+				取值：同上
+			6.date_hierarchy
+				作用：列表页中增加时间分层选择器
+				取值：只能取一个值，必须是DateField或DateTimeField的
+			7.fields
+				作用：在详情页中，指定要显示的字段以及顺序
+				取值：由属性名称组成的元组或列表
+			8.fieldsets
+				作用：详情页中，对字段们进行分组
+				注意：fieldsets与fields不能共存的
+				取值：
+					fieldsets = (
+						#分组1
+						('组名',{
+							'fields':('属性1',"属性2",),
+							'classes':('collapse',)
+						}),
+						#分组2
+						()
+					)
+			练习：完成Publisher的高级管理功能
+				1.在列表页中显示name,address,city属性
+				2.address 和 city 是可编辑的
+				3.右侧增加过滤器，允许按照city筛选
+				4.顶部增加搜索框，允许按照name和website搜索
+				5.详情页中分组显示
+					1.name,address,city : 基本信息
+					2.conuntry,website : 高级信息，并可折叠
+3.关系映射
+	1.一对一映射
+		1.语法
+			在关联的两个类中的任何一个类中:
+			属性=models.OneToOneField(Entry)
+		2.示例
+			class Author(models.Model):
+				xxxx xxxx
+
+			class Wife(models.Model):
+				xxxx xxxx
+				author=models.OneToOneField(Author)
+
+			Author中也会有一个隐式属性 - wife
+
+		练习：
+			1.查询 巴金 的夫人的信息
+			2.查询 金夫人 的对应的Author的信息
+	2.一对多映射
+		1.语法
+			在"多"实体中增加对"一"实体的引用
+			属性 = models.ForeignKey(Entry)
+
+			ex:
+				一个出版社允许出版多本图书
+				一本图书只能属于一个出版社
+				出版社(1) : 图书(多)
+				class Publisher(models.Model):
+					xxxx 
+
+				class Book(models.Model):
+					xxxx
+					publisher = models.ForeignKey(Publisher)
+		2.数据管理
+			1.增加数据
+				1.通过 book.publisher_id 插入关联数据、
+					book = Book(xxx xxx)
+					book.publisher_id = 1
+					book.save()
+				2.通过 book.publisher 插入关联数据
+					book = Book(xxx)
+					pub = Publisher.objects.get(id=2)
+					book.publisher = pub
+					book.save()
+			2.查询数据
+				1.正向查询
+					通过 Book 查询 Publisher 
+					book = Book.objects.get(id=1)
+					pub = book.publisher
+				2.反向查询
+					通过 Publisher 查询对应的所有的 Book
+					Django会在Publisher中增加一个属性表示对Book的查询引用
+					属性 ：book_set --> (Entry.objects)
+	3.多对多映射
+		1.语法
+			在关联的两个类的任意一个类中，增加：
+			属性 = models.ManyToManyField(Entry)
+
+			class Author(models.Model):
+				xxx
+
+			class Book(models.Model):
+				xxx
+
+				author_set = models.ManyToManyField(Author)
+		2.数据管理
+			1.增加数据
+				通过关联属性的add()方法实现数据的增加
+			2.删除数据
+				通过关联属性的remove()实现删除数据
+			3.查询数据
+				1.正向查询
+					通过Book查询Author,可以通过关联属性来表示对Author的查询对象 --> objects
+					示例：查询射雕英雄传对应所有的作者
+					 book=Book.objects.get(title='射雕英雄传')
+					 book.author_set.all()
+				2.反向查询
+					通过Author查询Book,可以通过Django增加的隐式属性book_set来获取对应的book的查询对象 --> objects
+					author=Author.objects.get(name='金庸')
+					books = author.book_set.all()
+
+
+
+
+
+
+
+
+update author set age=age+10
+Author.objects.all().update(age=age+10)

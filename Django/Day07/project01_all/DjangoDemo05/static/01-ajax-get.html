@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <button onclick="btnAjax()">
+        发送AJAX的GET请求
+    </button>
+    <button onclick="btnAjaxParams()">
+        发送带参数的AJAX请求
+    </button>
+    <p id="show"></p>
+    <script src="/static/js/jquery-1.11.3.js"></script>
+    <script>
+        function btnAjax(){
+          $.get("/11-ajax-get/",function(data){
+            $("#show").html(data);
+          });
+        }
+
+        /**
+         * 带参数的AJAX的get请求
+         * */
+        function btnAjaxParams(){
+            var params = {
+              'uname':'wangwc',
+              'upwd':'lixiaochao'
+            }
+            $.get('/12-ajax-params/',params,function(data){
+              $("#show").html(data);
+            });
+        }
+    </script>
+</body>
+</html>

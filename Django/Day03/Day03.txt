@@ -1,0 +1,257 @@
+1.模型 - Models
+	1.ORM框架
+		ORM ：Object Relational Mapping
+		三大特征：
+			1.表 到 类的映射
+			2.数据类型的映射
+			3.关系映射
+	2.创建 和 配置数据库
+		1.创建数据库
+			create database webdb default charset utf8 collate utf8_general_ci;
+		2.Django中的数据库配置
+			settings.py中找到DATABASES变量
+			DATABASES = {
+				'default': {
+						'ENGINE': 'django.db.backends.sqlite3',
+						'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+				}
+			}
+			1.ENGINE
+				指定数据库引擎，mysql引擎如下：
+				'ENGIN':'django.db.backends.mysql'
+			2.NAME
+				指定要连接的数据库的名称
+				'NAME':'webdb'
+			3.USER
+				指定登录到数据库的用户名称
+				'USER':'root'
+			4.PASSWORD
+				指定登录到数据的用户密码
+				'PASSWORD':'123456'
+			5.HOST
+				指定要连接到的主机地址
+				'HOST':'localhost'
+			6.PORT
+				指定要连接到的主机的端口号
+				'PORT':3306
+		3.Django中的数据库迁移
+			1. ./manage.py makemigrations
+				作用：
+					将每个应用下的models.py文件生成一个中间迁移文件，并将中间文件保存在migrations的目录中
+			2. ./manage.py migrate
+				作用：
+					将每个应用下migrations目录中的中间文件同步回数据库
+		4.编写Models
+			1.编写示例
+				见代码
+			2.Models的语法规范
+				class CLASSNAME(models.Model):
+					NAME=models.FIELDTYPE(FIELDOPTIONS)
+				1.CLASSNAME
+					实体类名称，表名组成的一个部分
+					默认表名组成规范：
+						应用名称_CLASSNAME
+				2.NAME
+					属性名，映射回数据库就是字段名称
+				3.FIELDTYPE
+					字段类型：映射到表中的字段的类型
+					1.BooleanField()
+						编程语言中使用True或False表示该列值
+						数据库中使用 1 或 0 表示具体的值
+						数据类型为:tinyint
+					2.CharField()
+						数据类型为:varchar
+						注意：
+							必须要指定max_length参数值
+					3.DateField()
+						编程语言中使用字符串来表示该列值
+						数据库中使用的日期来表示
+						数据类型为:date
+					4.DateTimeField()
+						数据类型为:datetime
+					5.DecimalField()
+						编程语言中使用小数表示该列的值
+						数据库中使用定点小数表示值
+						数据类型:decimal
+						money=models.DecimalField(max_digits=7,decimal_places=2)
+					6.FloatField()
+						数据库以及编程语言中都使用小数表示
+						数据类型为:float
+					7.EmailField()
+						编程语言中使用字符串表示该列的值
+						数据库中也是字符串
+						数据类型为:varchar
+					8.IntegerField()
+						编程语言和数据库中都使用整数
+						数据类型为:int
+					9.URLField()
+						编程语言和数据库中都使用字符串
+						数据类型为:varchar
+					10.ImageField()
+						存储图片的路径
+						编程语言和数据库中都是用字符串
+						image=models.ImageField(upload_to='image/users/')
+						注意：
+							必须指定上传路径
+							所以在后台上传时会自动的将文件保存在指定目录处
+				4.FIELDOPTIONS
+					字段选项，指定创建列的额外信息
+					1.primary_key
+						如果设置为True，表示该列为主键
+					2.null
+						如果设置为Ture，表示该列允许为空
+						默认为False
+					3.default
+						设置所在列的默认值
+					4.db_index
+						如果设置为True，则为所在列添加索引
+					5.unique
+						如果设置为True，表示所在列的值要唯一
+					6.db_column
+						指定映射到列的列名，如果不指定的话则采用属性名称作为列名
+			练习：
+				在 index 应用中再追加两个model类
+				1.Author - 作者
+					1.name - 姓名
+					2.age - 年龄
+					3.email - 邮箱(允许为空)
+				2.Book - 图书
+					1.title - 书名
+					2.publicate_date - 出版时间
+		5.相关指令
+			1.通过数据库自动导出models
+				./manage.py inspectdb > 文件名.py
+			2.数据的版本切换
+				1. ./manage.py migrate
+					执行所有应用中最新版本的数据库迁移文件
+				2. ./manage.py migrate 应用名称 版本号
+					./manage.py migrate index 0001
+	3.数据的CRUD
+		1.增加数据
+			1.Entry.objects.create(属性=值,属性=值)
+				返回值：返回创建好的实体对象
+			2.创建 Entry 的对象，并调用save()进行保存
+				obj = Entry(属性=值,属性=值,...)
+				obj.属性=值
+				obj.save()
+				无返回值，保存成功后，obj会被重新赋值
+			3.使用字典创建对象,并调用save()进行保存
+				dic = {
+					'属性1':"值1",
+					'属性2':"值2",
+					... ...
+				}
+				obj=Entry(**dic)
+				obj.save()
+
+			练习：
+				使用以上三种方式，向Book和Publisher表中各增加至少三条数据
+		2.查询数据(重点)
+			通过 Entry.objects 属性调用查询接口
+			ex:
+				Entry.objects.all()
+				Entry.objects.filter()
+				Entry.objects.values()
+				.... ....
+			1.基本查询操作
+				语法:all()
+				用法:Entry.objects.all()
+				作用：查询Entry实体中所有行所有列的记录
+				 SQL：select * from Entry 
+				返回：QuerySet
+					1.所有的QuerySet都可以通过query属性得到对应的SQL语句
+					2.所有的QuerySet都可以当成列表操作
+			2.查询返回指定列
+				语法：values() | values('列1','列2',)
+				用法：
+					Entry.objects.values('列1','列2')
+					Entry.objects.all().values('列1','列2')
+				返回值：QuerySet
+					会将查询出来的数据封装到字典中再封装到列表中
+			3.查询返回指定列
+				语法：values_list('列1','列2')
+				用法：
+					Entry.objects.values_list()
+					Entry.objects.all().values_list()
+				返回：QuerySet
+					会将查询出来的数据封装到元组中再封装到列表中
+				
+				练习：
+					1.创建路由 /03-queryall
+					2.查询Author实体中所有的数据
+						并渲染到03-queryall.html模板上
+					3.在03-queryall.html模板上
+						显示所有的数据
+						姓名 年龄 邮箱 操作
+						xx   xx   xxx  删除 修改
+			4.根据条件查询部分行数据(重难点)
+				语法:filter(条件)
+				用法:Entry.objects.filter(条件)
+				返回:QuerySet
+				ex:
+					1.查询id为1的Author的信息
+						authors=Author.objects.filter(id=1)
+					2.查询publicate_date为2018-10-12的Book的信息
+						books=Book.objects.filter(publicate_date='2018-10-12')
+					3.查询id为1并且publicate_date为2018-10-12的Book的信息
+						books=Book.objects.filter(id=1,publicate_date='2018-10-12')
+
+				如果要非等值查询条件，需要使用查询谓词
+				Django：Field Lookup
+				查询谓词：是一个独立的查询功能
+					语法：filter(属性__查询谓词=值)
+					ex:
+						__exact : 等值匹配
+						__contains : 包含指定值
+						__in : 在指定范围内的值
+						__gt : 大于指定值
+						__gte:
+						__lt :
+						__lte:
+						__startswith : 以 xx 作为开始
+						__endswith : 以 xx 作为结束
+						__range : 在指定区间范围
+						__date : 获取日期部分数据
+						__year : 获取年
+						__month
+						__day
+						.. ..
+
+					练习：
+						1.查询Author表中age 大于等于95的Author的信息
+						2.查询Author表中所有姓"鲁"的人的信息
+						3.查询Author表中Email中包含'sh'的人的信息
+						4.查询Author表中Age大于"鲁迅"的age的人的信息
+			5.不等的条件筛选
+				语法:exclude(条件)
+				用法:Entry.objects.exclude(条件)
+			6.排序
+				语法:order_by('列1','-列2')
+				用法:Entry.objects.order_by('列')
+				说明:
+					默认是按升序排序，降序则在列前增加'-'即可
+			7.查询只返回一条数据
+				语法:get(条件)
+				用法:Entry.objects.get(条件)
+				注意:
+					该方法必须只能返回一条数据
+					返回多条数据：抛异常
+					无数据返回  ：抛异常
+
+<QuerySet 
+	[
+		{'name': '莫言', 'id': 1, 'age': 65, 'email': 'moyan@163.com', 'isActive': True}, 
+		{'name': '老舍', 'id': 2, 'age': 105, 'email': 'laoshe@163.com', 'isActive': True}, 
+		{'name': '鲁迅', 'id': 3, 'age': 95, 'email': 'zhoushuren@163.com', 'isActive': True}, 
+		{'name': '巴金', 'id': 4, 'age': 100, 'email': 'eightJin@163.com', 'isActive': False}
+	]
+>
+
+
+<QuerySet [
+<Author: Author object>,
+<Author: Author object>,
+<Author: Author object>, 
+<Author: Author object>]>
+
+SELECT `index_author`.`id`, `index_author`.`name`, `index_author`.`age`, `index_author`.`email`, `index_author`.`isActive` FROM `index_author`

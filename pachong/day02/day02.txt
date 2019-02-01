@@ -1,0 +1,241 @@
+Day01回顾
+1、请求模块(urllib.request)
+   1、Request(url,data=data,headers=headers)
+   2、urlopen(请求对象)
+2、响应对象res的方法
+   1、res.read() ##bytes
+      res.read().decode('utf-8') ##字符串
+   2、res.getcode()
+   3、res.geturl()
+3、url编码模块(urllib.parse)
+   1、urlencode({字典})
+      1个查询参数 ：{'kw':'美女吧'}
+        ##编码后 'kw=%E8....'
+      2个查询参数 ：{'kw':'美女吧','pn':'50'}
+        ##编码后 'kw=%E8...&pn=50'
+   2、quote('字符串')
+      s = '屠龙刀'
+      quote(s) : '%E5....'
+   3、unquote('编码后的字符串')
+      s = '%E5....'
+      unquote(s) : 屠龙刀
+4、数据爬取步骤
+   1、找URL规律(拼接)
+   2、获取响应内容
+   3、保存
+5、请求方式
+   1、GET ：查询参数在URL地址上显示
+   2、POST：参数名data,查询参数在Form表单里
+      注意 ：data一定要以bytes数据类型提交
+      data = {....}
+      data = urllib.parse.urlencode(data).encode()
+6、json模块
+   Dict = json.loads('json格式的字符串')
+***********************************************
+1、解析模块
+  1、数据的分类
+    1、结构化数据
+      特点：固定格式,HTML,JSON,XML
+    2、非结构化数据
+      图片,音频,视频,一般存储为二进制
+  2、正则解析模块re使用流程
+    1、rList = re.findall(r'表达式','字符串',re.S)
+    2、写法2
+      1、创建编译对象
+         p = re.compile(r'',re.S)
+      2、进行字符串匹配
+         rList = p.findall(html)
+  3、元字符
+     .  : 匹配任意1个字符(不包括\n)
+     \d : 1个数字
+     \s : 空白字符
+     \S : 非空白字符 #[\s\S]可匹配任意1个字符
+     [] : 包含[]内容
+     \w : 普通字符
+     \W : 特殊字符
+     
+     * : 0次或N次
+     + : 1次或N次
+     ? : 0次或1次
+     {m} : m次
+  4、贪婪匹配和非贪婪匹配
+    1、贪婪匹配(.*) : 在整个表达式匹配成功的前提下,尽可能多的匹配*
+    2、非贪婪匹配(.*) : 在整个表达式匹配成功的前提下,尽可能少的匹配*
+  5、分组(findall())
+    ## 在网页中,你想要什么数据,你就加()
+    先按照整体正则匹配出来,然后再匹配()中 
+    如果有2个(),则以元组形式显示
+  6、正则分组练习
+	<div class="animal">
+	  <p class="name">
+	    <a title="Tiger"></a>
+	  </p>
+
+	  <p class="contents">
+	    Two tigers two tigers run fast
+	  </p>
+	</div>
+
+	<div class="animal">
+	  <p class="name">
+	    <a title="Rabbit"></a>
+	  </p>
+
+	  <p class="contents">
+	    Small white rabbit white and white 
+	  </p>
+	</div>
+	第1步实现：[("Tiger","Two ..."),("Rabbit","Sm..")]
+	第2步实现：
+	    动物名称 ：Tiger
+	    动物描述 ：Two tigers two tigers ...
+	    ******************************
+	    动物名称 ：Rabbit
+	    动物描述 ：Small whilte rabbit ...
+2、csv模块使用流程
+   1、导入模块
+      import csv
+   2、打开csv文件
+      ## 一定要加newline='',否则会多出空行
+      with open('XX.csv','w',newline='') as f:
+   3、初始化写入对象
+      writer = csv.writer(f)
+   4、写入数据
+      writer.writerow([列表])
+3、猫眼电影top100榜单
+  1、网址 ：猫眼电影 - 榜单 - top100榜
+  2、目标 ：电影名称、主演、上映时间
+  3、步骤
+    1、找URL规律
+      第1页：https://maoyan.com/board/4?offset=0
+      第2页：https://maoyan.com/board/4?offset=10
+      第n页：offset=(n-1)*10
+    2、写正则表达式
+      '<div class="movie-item-info">.*?title="(.*?)".*?class="star">(.*?)</p>.*?class="releasetime">(.*?)</p>',re.S
+    3、代码实现
+4、Anaconda环境安装模块
+  1、(管理员方式)进入到Anaconda Prompt
+  2、执行安装命令
+     conda install pymongo
+     conda install pymysql
+5、数据持久化存储
+  1、pymongo回顾
+    1、连接对象
+       conn = pymongo.MongoClient('IP',27017)
+    2、库对象
+       db = conn['库名']
+    3、集合对象
+       myset = db['集合名']
+    4、执行插入语句
+       myset.insert_one({字典})
+
+      >>>show dbs
+      >>>use 库名
+      >>>show collections
+      >>>db.集合名.find().pretty()
+      >>>db.集合名.count()
+      >>>db.dropDatabase()
+  2、pymysql回顾
+     1、创建数据库对象
+     2、创建游标对象
+     3、执行命令
+     4、(重要)提交到数据库执行
+  3、warnings模块
+     import warnings
+     # 过滤警告/忽略警告
+     warnings.filterwarnings('ignore')
+  4、猫眼电影存入MySQL数据库
+    1、建库
+      mysql> create database mydb charset=utf8;
+    2、建表
+      use mydb;
+      create table top100(
+      id int primary key auto_increment,
+      name varchar(50),
+      star varchar(150),
+      time varchar(50)
+      )charset=utf8;
+    3、写程序
+    4、SQL查询
+      1、查询1990-2000年的电影信息
+        select name,time from top100  where time>='1990-01-01' and time<'2001-01-01'
+      2、查询20年以前的电影
+        select name,time from top100 where time<=(now()-interval 20 year);
+6、远程存入MySQL数据库
+  1、开启远程连接
+    sudo -i
+    cd /etc/mysql/mysql.conf.d/
+    subl mysqld.cnf
+    把下面这行注释掉
+    #bind-address = 127.0.0.1
+    重启数据库服务
+    /etc/init.d/mysql restart
+    service mysql restart
+  2、添加授权用户
+    mysql> grant all privileges on *.* to 'lion'@'%' identified by '123456' with grant option;
+    mysql> flush privileges;
+  3、关闭Ubuntu防火墙
+    sudo ufw disable
+7、Ubuntu中防火墙(ufw)基本操作
+   1、打开防火墙
+      sudo ufw enable
+   2、关闭防火墙
+      sudo ufw disable
+   3、添加防火墙规则
+      sudo ufw allow 端口号
+      sudo ufw allow 3306
+   4、查看状态
+      sudo ufw status
+8、Fiddler抓包工具
+  1、配置Fiddler
+    1、Tools->Options
+       1、HTTPS
+          1、Decrypt Https Traffic (选中,自动添加证书信任窗口)
+	  2、...from browsers only
+       2、Connections
+          1、监听端口 ：8888
+	  2、手机抓包 ：Allow remote computers to connect(选中)
+    2、重启Fiddler(重要)
+  2、配置浏览器代理
+    1、浏览器右上角：SwitchOmega->选项->+新建情景模式->AID1809(名字)->创建
+    2、HTTP://     127.0.0.1    8888(Fiddler端口)
+    3、点击 ：应用选项
+    4、点击SwitchOmega可切换代理(AID1809)
+9、Fiddler常用菜单
+  1、Inspector：查看抓到的数据包详细内容
+     整体氛围请求(Request)和响应(Response)两部分
+  2、常用菜单
+     1、Headers
+       显示客户端发送到服务器的请求头,包含客户端信息、cookie、传输状态
+     2、WebForms
+       显示POST请求的数据<body>中
+     3、Raw
+       将整个请求显示为纯文本
+
+
+
+
+
+
+
+
+
+
+
+allChars = sting.whitespace + string.punctuation
+username = input("请输入用户名:")
+
+for u in username:
+     if u in allChars:
+         print('用户名不能包含特殊字符')
+
+
+
+
+
+
+
+
+
+
+

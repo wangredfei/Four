@@ -1,0 +1,225 @@
+Day07回顾
+1、response.xpath('')
+  结果：列表,选择器对象
+    extract():提取文本内容,将列表中所有元素序列化为Unicode字符串
+2、MongoDB持久化存储
+  1、settings.py设置相关变量
+  2、pipelines.py自定义管道类
+     class CsdnMongoPipeline(object):
+         def __init__(self):
+	     pass 
+	 def process_item(self,item,spider):
+	     return item
+	 # 爬虫程序结束时执行此方法
+	 def close_spider(self,spider):
+	     pass
+  3、settings.py添加ITME_PIPELINES={}
+    ITME_PIPELINES={
+      'Csdn.pipelines.CsdnMongoPipeline':500,
+    }
+3、settings.py常用变量
+  LOG_LEVEL = ''
+  LOG_FILE = ''
+  FEED_EXPORT_ENCODING = ''
+  IMAGES_SOTRE = ''
+4、日志级别
+  DEBUG < INFO < WARNING < ERROR < CRITICAL
+5、保存为csv、json文件
+  1、scrapy crawl 爬虫名 -o XXX.json/XXX.csv
+  2、FEED_EXPORT_ENCODING = 'gb18030'
+  3、解决csv文件空行问题
+     找到exporters.py改一下源码(csv的类)：
+       files,
+       newline = '',
+6、图片管道类
+  1、items.py
+    imgLink = scrapy.Field()
+  2、pipelines.py
+    from scrapy.pipelines.images import ImagesPipeline
+    import scrapy
+    class SoPipeline(ImagesPipeline):
+        # 重写方法
+	def get_media_requests(self,item,info):
+	    yield scrapy.Request(item['imgLink'])
+  3、settings.py
+    IMAGES_STORE = ''
+7、重写爬虫文件start_requests()方法
+  1、作用 ：不再爬取start_urls地址
+  2、流程
+    1、把start_urls去掉
+    2、def start_requests(self):
+           pass 
+8、scrapy.Request(url,callback=解析方法名)
+************************************************
+1、scrapy shell使用
+  1、scrapy shell URL地址
+  *2、request.headers : 请求头(字典)
+  *3、request.meta : 定义代理等相关信息(字典)
+  4、response.text : 字符串
+  5、response.body : 字节流
+  6、response.xpath('')
+2、scrapy.Request()常用参数
+  1、url
+  2、callback
+  3、headers
+  *4、meta        : 定义代理等相关信息{}
+  *5、dont_filter : 是否忽略域组限制
+    默认False,检查allowed_domains=['']
+  6、encoding    : 默认utf-8,不用配置
+3、升级Scrapy
+  1、安装pip
+    1、从官网下载pip安装包,并解压
+    2、cd到解压路径,执行如下命令
+       python setup.py install
+    ####################################
+    如果pip版本低则升级pip
+    python -m pip install --upgrade pip
+    ####################################
+  2、升级Scrapy
+    python -m pip install --upgrade Scrapy
+4、下载器中间件(随机User-Agent)
+  1、以前setting.py(少量User-Agent)
+     1、USER_AGENT=''
+     2、DEFAULT_REQUEST_HEADERS={}
+  2、现在middlewares.py设置中间件
+    1、项目目录新建useragents.py,存放大量agent
+       uaList = ['','','','']
+    2、middlewares.py中创建中间件类
+       from Testmid.useragents import *
+       class RandomUAmiddleware(object):
+         def process_request(self,request,spider):
+            # 此处注意 headers 属性
+	    request.headers['User-Agent'] = ...
+    3、开启中间件(settings.py)
+       DOWNLOADER_MIDDLEWARES={
+         'Testmid.middlewares.RandomUAmiddleware':300,
+       }
+5、下载器中间件(随机代理)
+   request.meta['proxy']=random.choice(proxyList)
+**********************************************
+6、机器视觉与tesseract(验证码)
+  1、OCR
+    光学字符识别,通过字符形状-->电子文本
+  2、tesseract-ocr(OCR的一个底层识别库,不能导入)
+    1、安装(windows)
+      1、windows下载安装,并添加到环境变量
+        https://sourceforge.net/projects/tesseract-ocr-alt/files/tesseract-ocr-setup-3.02.02.exe/download
+      2、环境变量路径 
+        C:\Program Files (x86)\Tesseract-OCR
+    2、安装(Ubuntu和Mac)
+      sudo apt-get install tesseract-ocr
+      brew install tesseract
+  3、验证(测试)识别
+    cmd终端: tesseract test1.jpg test1
+  4、pytesseract模块
+    1、安装
+      Anaconda Prompt: pip install pytesseract
+    2、使用示例
+**********************************************
+7、在线打码平台
+  1、tesseract-ocr识别率很低,很多文字变形,干扰,导致无法识别
+  2、在线打码
+    1、云打码平台 ：http://www.yundama.com/
+    2、注册用户 - 充值 - 下载接口(开发文档)
+    3、题分价格(类型码,在程序中写正确)
+  3、示例
+    1、调整接口文档(YDM.py)
+    2、写主体程序
+8、redis安装
+  1、Windows
+    1、直接下载安装
+    2、启动并连接
+       1、服务端启动
+         cmd -> redis-server.exe redis.conf
+       2、客户端连接
+         cmd -> redis-cli.exe
+    3、安装图形界面管理工具RedisDesktopManager
+       左下角新建连接 + Connect to Redis Server
+  2、Ubuntu
+    1、安装 ：sudo apt-get install redis-server
+    2、启动 ：redis-server
+    3、连接 ：redis-cli -h IP地址
+9、分布式爬虫
+  1、原理 ：多台机器共享1个爬取队列
+  2、实现 ：重写scrapy调度器(scrapy_redis模块)
+     安装 ：Anaconda Prompt:
+            pip install scrapy_redis
+  3、为什么使用redis
+    1、Redis是非关系型数据库,key-value形式存储
+    2、Redis集合,存储每个request的指纹
+10、打开GitHup登录,搜索scrapy_redis,查看
+11、修改腾讯招聘案例
+   1、在settings.py中添加如下代码
+    # 使用scrapy_redis调度器
+    SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+    # 使用scrapy_redis的去重机制
+    DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+    # 不清除请求指纹
+    SCHEDULER_PERSIST = True
+    # 设置管道
+    ITEM_PIPELINES = {
+      'scrapy_redis.pipelines.RedisPipeline':500,
+    }
+    REDIS_HOST = '192.168.1.103'
+    REDIS_PORT = 6379
+   2、运行爬虫,数据会存储到Redis数据库
+     tengxun:dupefilter : 请求指纹
+     tengxun:items      : 数据
+     tengxun:requests   : 请求头信息
+12、腾讯招聘都存入mongodb数据库
+  1、把ITEM_PIPELINES管道设置为mongodb的管道
+  2、把代码拷贝一份到Ubuntu,同时启动爬虫
+  3、查看mongdb中的集合数据,不会有重复
+13、使用redis_key改写,同时存入MongoDB
+  ## 在12步的基础之上改写爬虫文件tengxun.py
+  1、from scrapy_redis.spiders import RedisSpider
+  2、class TengxunSpider(RedisSpider):
+        # 去掉start_urls,添加redis_key
+	redis_key='tengxunspider:start_urls'
+  3、多台机器同时启动项目
+  4、进入redis命令行,发送执行
+     >>>lpush tengxunspider:start_urls https://hr.tencent.com/position.php?start=0
+14、手机端app抓取(见图)
+  1、设置手机
+     1、设置无线DHCP服务为手动
+        IP地址 ：你电脑的IP(ipconfig)
+	端口号 ：8888
+     2、手机打开浏览器,输入 http://IP:8888 下载证书并安装
+  2、设置电脑(见图,更改注册表)
+    
+  3、设置Fiddler
+    1、Tools -> Options
+      1、HTTPS选项卡 ：...from all processes
+      2、Connections选项卡
+         1、端口号：8888
+	 2、Allow remote computers to Connect
+  4、重启Fiddler
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+yiled scrapy.Request(url,callback=...}
+
+
+
+
+
+
+
+
+

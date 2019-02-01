@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h2>
+        <a href="/02-server">去往/02-server</a>
+    </h2>
+    <button onclick="btnAjax()">使用AJAX发送请求</button>
+    <h2 id="show"></h2>
+    <script>
+        function createXhr(){
+          var xhr = null;
+          //判断浏览器对xhr的支持性
+          if(window.XMLHttpRequest){
+            xhr = new XMLHttpRequest();
+          }else{
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+          }
+          return xhr;
+        }
+
+        function btnAjax(){
+          //1.创建xhr对象
+          var xhr = createXhr();
+          //2.创建请求
+//          xhr.open('get','/02-server',true);
+          xhr.open('get','/03-server?uname=wangwc',true);
+          //3.设置回调函数
+          xhr.onreadystatechange=function(){
+            //判断readyState是否为4并且status是否为200
+            //如果以上条件达成，则可以接收响应数据
+            if(xhr.readyState==4&&xhr.status==200){
+                //接收响应数据
+                var resText=xhr.responseText;
+                //将resText放在#show中显示
+                document.getElementById("show").innerHTML=resText;
+            }
+          }
+          //4.发送请求
+          xhr.send(null);
+        }
+    </script>
+</body>
+</html>

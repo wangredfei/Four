@@ -1,0 +1,153 @@
+Day04回顾
+1、lxml使用流程
+  1、from lxml import etree
+  2、parseHtml = etree.HTML(html)
+  3、rList = parseHtml.xpath('')
+2、xpath匹配规则
+  1、获取节点对象 ： //div[@class="tiger"]
+  2、获取属性值   ： //div[@class="a"]//a/@src
+  3、函数 ：//div[contains(@id,"aa")]//a/@href
+3、xpath高级
+  1、基准xpath表达式(节点对象列表)
+  2、for r in [节点对象列表]:
+         username = parseHtml.xpath('./....')
+********************************************
+1、Ajax动态加载网站数据抓取
+  1、特点 ：滚动鼠标滑轮时加载
+  2、抓包工具(F12) ：QueryString
+2、豆瓣电影(Ajax)数据抓取
+  1、网址 ：豆瓣电影-排行榜-剧情
+  2、目标 ：电影名称、评分
+  3、F12/抓包工具
+    滚动鼠标滑轮抓包,找到2个数据
+      1、Request URL(Raw) ：GET的地址
+      2、QueryString(WebForms) : 发送的数据
+  4、代码实现
+    type: 11
+    interval_id: 100:90
+    action: 
+    start: 100
+    limit: 20
+3、selenium+phantomjs/Chrome强大网络爬虫组合
+  1、selenium
+    1、定义 ：Web自动化测试工具,用于Web自动化测试
+    2、特点
+      1、可运行在浏览器,根据指定命令操作浏览器,让浏览器自动加载页面
+      2、只是工具,必须与第三方浏览器结合使用
+    3、安装selenium
+      Anaconda Prompt: conda install selenium
+  2、phantomjs浏览器
+    1、定义 ：无界面浏览器(无头浏览器)
+    2、特点 ：把网站在内存进行页面加载,运行高效
+    3、安装
+      1、下载对应安装包(.exe),将文件放到Python安装目录的Scripts目录下
+        D:\Anaconda3\Scripts
+  3、chromedriver安装
+    1、下载网址 https://chromedriver.storage.googleapis.com/index.html
+    2、安装
+      1、查看本机Chrome浏览器版本
+        设置-帮助-关于Google Chrome
+      2、下载对应版本的chromedriver.exe(notes.txt)
+    3、拷贝到Python安装目录的Scripts目录下
+    4、cmd终端 ：chromedriver -v
+  4、示例代码1
+  5、示例代码2
+  6、常用方法
+    1、driver.get(url)
+    2、driver.page_source : 获取响应的html源码
+    3、driver.page_source.find('字符串')
+       作用：从html源码中搜索指定字符串
+             -1 ：查找失败
+    4、单元素查找(返回值为1个节点对象)
+      1、driver.find_element_by_id('').text
+      2、driver.find_element_by_name('')
+      3、driver.find_element_by_class_name('')
+      4、driver.find_element_by_xpath('表达式')
+    5、多元素查找(节点对象列表)
+      1、driver.find_elements_by_...('')
+    6、节点对象.send_keys('内容')
+    7、节点对象.click()
+    8、driver.quit()
+4、chromedriver设置无界面模式
+  1、opt = webdriver.ChromeOptions()
+  2、opt.set_headless()
+  3、driver = webdriver.Chrome(options=opt)
+5、京东商品爬取
+  1、网址 ：https://www.jd.com/
+  2、目标 ：输入搜索商品,爬取内容如下：
+     1、商品名称
+     2、商品价格
+     3、评论数量
+     4、商家名称
+  3、准备工作
+     1、搜索框属性值  : class->text
+     2、搜索按钮属性值: class->button
+     3、下一页属性值
+        能点  ：class->pn-next
+	不能点：pn-next disabled
+     4、页面商品节点对象列表xpath表达式
+        //div[@id="J_goodsList"]/ul/li
+  4、保存数据
+6、浏览器对象driver执行JS脚本
+   ## 把下拉菜单拉到最底部
+   driver.execute_script(
+   'window.scrollTo(0,document.body.scrollHeight)'
+   )
+7、作业
+  1、网址 ：https://www.douyu.com/directory/all
+  2、目标
+     1、主播名称
+     2、观众人数
+  3、统计一共有多少个主播,观众总数是多少
+8、多线程爬虫
+  1、进程
+    1、系统中正在运行的一个程序
+    2、1个CPU核心1次只能执行1个进程,其他非运行
+  2、线程
+    1、进程中包含的执行单元,1个进程可包含多个线程
+    2、线程可使用所属进程空间
+    3、互斥锁：防止多个线程同时使用共享空间
+  3、GIL：全局解释锁
+    执行通行证,仅此1个,拿到通行证可执行,否则阻塞
+  4、应用场景
+    1、多进程 ：大量的密集计算
+    2、多线程 
+       爬虫 ：网络I/O
+       写文件：本地磁盘I/O
+    
+    
+
+#######操作共享资源的问题产生的原理######
+number = 5000
+
+f1 : number=number+1 加100次
+f2 : number=number-1 减100次
+
+计算值执行：
+x1 = number+1  x1:5001
+number = x1    number:5001
+
+x2 = number-1  x2:5000
+number = x2    number:5000
+
+x1 = number+1  x1:5001
+x2 = number-1  x2:4999
+number = x2    number:4999
+number = x1    number:5001
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
